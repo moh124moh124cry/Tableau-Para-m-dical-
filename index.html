@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>توليد جدول المداومة الطبية والشبه طبية</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --border: #000;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f3f4f6;
+            color: #111827;
+            padding: 15px;
+        }
+
+        /* لوحة التحكم - تخفى عند الطباعة */
+        .no-print {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 1100px;
+            margin: 0 auto 25px auto;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        input, select {
+            padding: 9px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: 0.2s;
+        }
+
+        .btn-primary { background: #2563eb; color: #fff; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-success { background: #059669; color: #fff; }
+        .btn-success:hover { background: #047857; }
+        .btn-print { background: #4b5563; color: #fff; }
+        .btn-print:hover { background: #374151; }
+        .btn-danger { background: #dc2626; color: #fff; padding: 4px 8px; font-size: 12px; }
+
+        /* إدارة الموظفين */
+        .staff-list {
+            margin-top: 15px;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 15px;
+        }
+
+        .staff-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .staff-table th, .staff-table td {
+            border: 1px solid #e5e7eb;
+            padding: 8px;
+            text-align: right;
+            font-size: 13px;
+        }
+
+        .staff-table th { background: #f9fafb; }
+
+        /* منطقة الورقة الرسمية للجدول */
+        .sheet-page {
+            background: #ffffff;
+            width: 100%;
+            max-width: 1050px;
+            margin: 0 auto;
+            padding: 25px 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            color: #000;
+        }
+
+        .official-header {
+            text-align: center;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .official-header h3 { font-size: 15px; font-weight: bold; }
+        .official-header h4 { font-size: 14px; font-weight: bold; }
+        .official-header .doc-title {
+            font-size: 16px;
+            font-weight: 800;
+            margin-top: 6px;
+            text-decoration: underline;
+        }
+
+        .sub-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* الجدول الرسمي */
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            table-layout: fixed;
+        }
+
+        .schedule-table th, .schedule-table td {
+            border: 1.5px solid #000;
+            padding: 3px 4px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: #000;
+            word-wrap: break-word;
+        }
+
+        .schedule-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            font-size: 11.5px;
+        }
+
+        .col-day { width: 8%; }
+        .col-date { width: 11%; }
+        .col-shift { width: 22%; }
+        .col-note { width: 15%; font-size: 9.5px; line-height: 1.15; }
+
+        .legal-notice {
+            font-size: 9px;
+            line-height: 1.2;
+            font-weight: bold;
+            text-align: center;
+            padding: 4px;
+            border: 1px dashed #444;
+            margin-top: 4px;
+            background: #fafafa;
+        }
+
+        .schedule-footer {
+            margin-top: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .signatures div { width: 30%; }
+
+        .designer-tag {
+            text-align: center;
+            font-size: 10.5px;
+            color: #333;
+            margin-top: 35px;
+            border-top: 1px solid #ccc;
+            padding-top: 4px;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        /* إعدادات الطباعة وPDF */
+        @media print {
+            body {
+                background: #fff;
+                padding: 0;
+                margin: 0;
+            }
+            .no-print { display: none !important; }
+            .sheet-page {
+                box-shadow: none;
+                padding: 5mm;
+                width: 100%;
+                max-width: 100%;
+            }
+            @page {
+                size: A4 portrait;
+                margin: 6mm 6mm 6mm 6mm;
+            }
+            .schedule-table th, .schedule-table td {
+                border: 1.2px solid #000 !important;
+                font-size: 10px !important;
+                padding: 2.5px 2px !important;
+            }
+            .schedule-table th {
+                background-color: #eee !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- لوحة التحكم الإدارية -->
+    <div class="no-print">
+        <h2 style="margin-bottom: 15px; color: #1e3a8a;">⚙️ لوحة إعداد وتوليد جدول المداومة</h2>
+        
+        <div class="control-grid">
+            <div class="form-group">
+                <label>الشهر والسنة:</label>
+                <input type="month" id="selectedMonth" value="2026-08">
+            </div>
+            <div class="form-group">
+                <label>الولاية والمؤسسة:</label>
+                <input type="text" id="facilityHeader" value="مديرية الصحة و السكان لولاية النعامة">
+            </div>
+            <div class="form-group">
+                <label>اسم المؤسسة الجوارية:</label>
+                <input type="text" id="subFacility" value="المؤسسة العمومية للصحة الجوارية بالعين الصفراء">
+            </div>
+            <div class="form-group">
+                <label>اسم المركز الصحي:</label>
+                <input type="text" id="centerName" value="المركز الصحي عنبة بوبكر * مغرار *">
+            </div>
+            <div class="form-group">
+                <label>رقم التسجيل الإداري:</label>
+                <input type="text" id="docRegNum" value="............ /م-ع-ص-ج/ ع-ص/26">
+            </div>
+            <div class="form-group">
+                <label>عدد الموظفين لكل مناوبة:</label>
+                <select id="staffPerShift">
+                    <option value="1">موظف واحد (1)</option>
+                    <option value="2" selected>موظفان (2)</option>
+                    <option value="3">3 موظفين (3)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- إضافة موظف -->
+        <div class="staff-list">
+            <h3 style="font-size: 15px; margin-bottom: 8px;">👥 إدارة قائمة الموظفين والعطل:</h3>
+            <div class="control-grid">
+                <div class="form-group">
+                    <input type="text" id="newStaffName" placeholder="اسم الموظف (مثال: حمان ع)">
+                </div>
+                <div class="form-group">
+                    <select id="vacationStatus" onchange="toggleVacationDates()">
+                        <option value="active">يعمل (نشط)</option>
+                        <option value="vacation">في عطلة (تلقائي)</option>
+                    </select>
+                </div>
+                <div class="form-group" id="vacationStartGroup" style="display: none;">
+                    <input type="date" id="vacationStart">
+                </div>
+                <div class="form-group" id="vacationEndGroup" style="display: none;">
+                    <input type="date" id="vacationEnd">
+                </div>
+                <div class="form-group" style="align-self: flex-end;">
+                    <button class="btn-success" onclick="addStaff()">+ إضافة موظف</button>
+                </div>
+            </div>
+
+            <table class="staff-table">
+                <thead>
+                    <tr>
+                        <th>الاسم</th>
+                        <th>الحالة</th>
+                        <th>تاريخ بداية العطلة</th>
+                        <th>تاريخ نهاية العطلة</th>
+                        <th>إجراء</th>
+                    </tr>
+                </thead>
+                <tbody id="staffTableBody"></tbody>
+            </table>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-primary" onclick="generateSchedule()">⚡ توليد الجدول تلقائياً</button>
+            <button class="btn-print" onclick="window.print()">🖨️ طباعة / تصدير PDF</button>
+        </div>
+    </div>
+
+    <!-- المعاينة الرسمية للجدول -->
+    <div class="sheet-page">
+        <div class="official-header">
+            <h3>الجمهورية الجزائرية الديمقراطية الشعبية</h3>
+            <h3>وزارة الصحة</h3>
+            <h4 id="viewFacility">مديرية الصحة و السكان لولاية النعامة</h4>
+            <h4 id="viewSubFacility">المؤسسة العمومية للصحة الجوارية بالعين الصفراء</h4>
+            <div style="font-size: 12px; margin-top: 2px;">رقم: <span id="viewDocNum">............ /م-ع-ص-ج/ ع-ص/26</span></div>
+            <div class="doc-title" id="viewTitle">جدول المداومة الشبه الطبية لشهر أوت 2026</div>
+            <div style="font-weight: bold; font-size: 13px; margin-top: 3px;" id="viewCenterName">بالمركز الصحي عنبة بوبكر * مغرار *</div>
+        </div>
+
+        <table class="schedule-table">
+            <thead>
+                <tr>
+                    <th class="col-day">اليوم</th>
+                    <th class="col-date">التاريخ</th>
+                    <th class="col-shift">08 سا إلى 14 سا</th>
+                    <th class="col-shift">14 سا إلى 20 سا</th>
+                    <th class="col-shift">20 سا إلى 08 سا</th>
+                    <th class="col-note">ملاحظة</th>
+                </tr>
+            </thead>
+            <tbody id="scheduleBody">
+                <!-- يتم توليد الأيام هنا برمجياً -->
+            </tbody>
+        </table>
+
+        <div class="schedule-footer">
+            <div>ملاحظة: الموظفون يعملون وفق نظام المداومة والاستخلاف القانوني.</div>
+        </div>
+
+        <div class="signatures">
+            <div><strong>مدير المؤسسة العمومية</strong></div>
+            <div><strong>رئيس المركز الصحي</strong></div>
+            <div><strong>المدير الفرعي للمصالح الصحية</strong></div>
+        </div>
+
+        <div class="designer-tag">
+            من تصميم mohammed cherfaoui/Moghrar
+        </div>
+    </div>
+
+    <script>
+        // مصفوفة الشهور بالعربية
+        const arabicMonths = ["جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان", "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+        const arabicDays = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+
+        // قائمة الموظفين المبدئية (نفس القائمة الموجودة في وثيقتك الرسمية)
+        let staffList = [
+            { name: "حمان ع", onVacation: false, vStart: "", vEnd: "" },
+            { name: "خليفي ع", onVacation: false, vStart: "", vEnd: "" },
+            { name: "بن عاشور ر", onVacation: false, vStart: "", vEnd: "" },
+            { name: "ثليجي ن", onVacation: true, vStart: "2026-08-10", vEnd: "2026-08-31" },
+            { name: "عيساوي ر", onVacation: false, vStart: "", vEnd: "" },
+            { name: "سحنون ع غ", onVacation: false, vStart: "", vEnd: "" },
+            { name: "سايح ن", onVacation: false, vStart: "", vEnd: "" },
+            { name: "للزرق س", onVacation: false, vStart: "", vEnd: "" },
+            { name: "بوعامر م", onVacation: false, vStart: "", vEnd: "" },
+            { name: "خزان ف", onVacation: true, vStart: "2026-07-16", vEnd: "2026-08-10" },
+            { name: "بن يوس علي", onVacation: true, vStart: "2026-07-15", vEnd: "2026-08-10" },
+            { name: "مكي ربيع", onVacation: true, vStart: "2026-08-01", vEnd: "2026-08-31" }
+        ];
+
+        function toggleVacationDates() {
+            const isVacation = document.getElementById("vacationStatus").value === "vacation";
+            document.getElementById("vacationStartGroup").style.display = isVacation ? "flex" : "none";
+            document.getElementById("vacationEndGroup").style.display = isVacation ? "flex" : "none";
+        }
+
+        function renderStaffTable() {
+            const tbody = document.getElementById("staffTableBody");
+            tbody.innerHTML = "";
+            staffList.forEach((staff, index) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong>${staff.name}</strong></td>
+                    <td>${staff.onVacation ? '<span style="color:red; font-weight:bold;">عطلة</span>' : '<span style="color:green;">نشط</span>'}</td>
+                    <td>${staff.vStart || '-'}</td>
+                    <td>${staff.vEnd || '-'}</td>
+                    <td><button class="btn-danger" onclick="deleteStaff(${index})">حذف</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function addStaff() {
+            const nameInput = document.getElementById("newStaffName");
+            const name = nameInput.value.trim();
+            const isVacation = document.getElementById("vacationStatus").value === "vacation";
+            const vStart = document.getElementById("vacationStart").value;
+            const vEnd = document.getElementById("vacationEnd").value;
+
+            if (!name) return alert("يرجى إدخال اسم الموظف");
+
+            staffList.push({
+                name: name,
+                onVacation: isVacation,
+                vStart: isVacation ? vStart : "",
+                vEnd: isVacation ? vEnd : ""
+            });
+
+            nameInput.value = "";
+            renderStaffTable();
+        }
+
+        function deleteStaff(index) {
+            staffList.splice(index, 1);
+            renderStaffTable();
+        }
+
+        function getDaysInMonth(year, month) {
+            return new Date(year, month, 0).getDate();
+        }
+
+        function isStaffOnVacation(staff, dateStr) {
+            if (!staff.onVacation) return false;
+            if (!staff.vStart) return false;
+            const current = new Date(dateStr);
+            const start = new Date(staff.vStart);
+            const end = staff.vEnd ? new Date(staff.vEnd) : new Date("2099-12-31");
+            return current >= start && current <= end;
+        }
+
+        function generateSchedule() {
+            // تحديث العناوين
+            document.getElementById("viewFacility").innerText = document.getElementById("facilityHeader").value;
+            document.getElementById("viewSubFacility").innerText = document.getElementById("subFacility").value;
+            document.getElementById("viewDocNum").innerText = document.getElementById("docRegNum").value;
+            document.getElementById("viewCenterName").innerText = document.getElementById("centerName").value;
+
+            const monthVal = document.getElementById("selectedMonth").value;
+            const [year, month] = monthVal.split("-").map(Number);
+            const monthArabicName = arabicMonths[month - 1];
+            document.getElementById("viewTitle").innerText = `جدول المداومة الشبه الطبية لشهر ${monthArabicName} ${year}`;
+
+            const totalDays = getDaysInMonth(year, month);
+            const staffCountPerShift = parseInt(document.getElementById("staffPerShift").value);
+            const tbody = document.getElementById("scheduleBody");
+            tbody.innerHTML = "";
+
+            let staffPointer = 0;
+
+            for (let day = 1; day <= totalDays; day++) {
+                const dayPadded = String(day).padStart(2, '0');
+                const monthPadded = String(month).padStart(2, '0');
+                const dateStr = `${year}-${monthPadded}-${dayPadded}`;
+                const dateFormatted = `${year}/${monthPadded}/${dayPadded}`;
+                const dateObj = new Date(year, month - 1, day);
+                const dayName = arabicDays[dateObj.getDay()];
+
+                // الموظفون المتاحون لهذا اليوم
+                const availableStaff = staffList.filter(s => !isStaffOnVacation(s, dateStr));
+                const vacationStaffToday = staffList.filter(s => isStaffOnVacation(s, dateStr));
+
+                // تعيين الفترات: صباح (08-14)، مساء (14-20)، ليل (20-08)
+                const getShiftMembers = () => {
+                    if (availableStaff.length === 0) return "---";
+                    let members = [];
+                    for (let k = 0; k < staffCountPerShift; k++) {
+                        members.push(availableStaff[staffPointer % availableStaff.length].name);
+                        staffPointer++;
+                    }
+                    return members.join(" + ");
+                };
+
+                const shift1 = getShiftMembers();
+                const shift2 = getShiftMembers();
+                const shift3 = getShiftMembers();
+
+                // ملاحظات العطل لهذا اليوم
+                let notesText = "";
+                if (vacationStaffToday.length > 0) {
+                    notesText = vacationStaffToday.map(s => `${s.name} عطلة`).join("<br>");
+                }
+
+                // إضافة التنبيه القانوني في الأيام الأخيرة كما في النموذج
+                if (day === totalDays - 4) {
+                    notesText += `<div class="legal-notice">هذا الجدول يعتبر مداومة فعلية</div>`;
+                }
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${dayName}</td>
+                    <td dir="ltr">${dateFormatted}</td>
+                    <td>${shift1}</td>
+                    <td>${shift2}</td>
+                    <td>${shift3}</td>
+                    <td>${notesText}</td>
+                `;
+                tbody.appendChild(tr);
+            }
+        }
+
+        // تشغيل أولي عند الفتح
+        renderStaffTable();
+        generateSchedule();
+    </script>
+</body>
+</html>
