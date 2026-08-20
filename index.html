@@ -337,7 +337,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>عدد موظفي المساء (14 إلى 20):</label>
+                <label>عدد موظفي المساء (14 إلى 08):</label>
                 <select id="eveningStaffCount">
                     <option value="1">1 موظف</option>
                     <option value="2" selected>2 موظفين</option>
@@ -565,7 +565,6 @@
             const nightStaff = employees.filter(e => e.type === "night");
             const dayStaff = employees.filter(e => e.type === "day");
 
-            // جمع بيانات العطل لعرضها في عمود الملاحظات
             const vacationList = employees.filter(e => e.isVacation && e.vStart);
 
             let dayPointer = 0;
@@ -580,7 +579,6 @@
                 const dateObj = new Date(year, month - 1, day);
                 const dayName = arabicDays[dateObj.getDay()];
 
-                // الموظفون النهاريون المتاحون لهذا اليوم
                 const activeDayStaff = dayStaff.filter(s => !isPersonOnVacation(s, isoDate));
 
                 // تعيين الصباح (1 إلى 3 موظفين)
@@ -600,7 +598,7 @@
                 }
                 dayPointer += (mCount + eCount);
 
-                // تعيين الليل (تناوب منتظم بين فرقتين)
+                // تعيين الليل
                 let nightShiftText = "---";
                 if (nightStaff.length >= 2) {
                     const pair1 = nightStaff.slice(0, 2).map(e => e.name).join(" + ");
@@ -649,7 +647,6 @@
         }
 
         function exportToPdf() {
-            // ضبط عنوان المستند ليحفظ الـ PDF تلقائياً باسم رسمي واضح
             const originalTitle = document.title;
             const mainTitle = document.getElementById("outMainTitle").innerText;
             document.title = mainTitle;
@@ -657,7 +654,7 @@
             document.title = originalTitle;
         }
 
-        // تشغيل أولي عند تحميل الصفحة
+        // تشغيل أولي
         renderEmployeesList();
         generateSchedule();
     </script>
