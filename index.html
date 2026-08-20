@@ -456,7 +456,7 @@
         const arabicDays = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
         const arabicMonths = ["جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان", "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
 
-        // قائمة الموظفين الديناميكية
+        // قائمة الموظفين
         let employees = [
             { name: "حمان ف", type: "day", isVacation: false, vStart: "", vEnd: "" },
             { name: "عيساوي ر", type: "day", isVacation: false, vStart: "", vEnd: "" },
@@ -466,7 +466,7 @@
             { name: "ثليجي ن", type: "day", isVacation: true, vStart: "2026-08-10", vEnd: "2026-08-31" },
             { name: "حمان ع", type: "night", isVacation: false, vStart: "", vEnd: "" },
             { name: "بوعامر م", type: "night", isVacation: false, vStart: "", vEnd: "" },
-            { name: "سحنون ع غ", type: "night", isVacation: false, vStart: "", vEnd: "" },
+            { name: "سحنون ع غ", type: "night", isVacation: true, vStart: "2026-08-20", vEnd: "2026-09-11" },
             { name: "سايح ن", type: "night", isVacation: false, vStart: "", vEnd: "" },
             { name: "خزان ف", type: "day", isVacation: true, vStart: "2026-07-16", vEnd: "2026-08-31" },
             { name: "بن يوس علي", type: "day", isVacation: true, vStart: "2026-07-15", vEnd: "2026-08-31" },
@@ -532,12 +532,13 @@
             generateSchedule();
         }
 
+        // فحص دقيق لعطلة الموظف في تاريخ معين
         function isPersonOnVacation(person, dateStr) {
             if (!person.isVacation || !person.vStart) return false;
-            const cur = new Date(dateStr);
-            const start = new Date(person.vStart);
-            const end = person.vEnd ? new Date(person.vEnd) : new Date("2099-12-31");
-            return cur >= start && cur <= end;
+            const curDate = dateStr;
+            const startDate = person.vStart;
+            const endDate = person.vEnd ? person.vEnd : "2099-12-31";
+            return curDate >= startDate && curDate <= endDate;
         }
 
         function getDaysInMonth(year, month) {
@@ -565,6 +566,7 @@
             const nightStaff = employees.filter(e => e.type === "night");
             const dayStaff = employees.filter(e => e.type === "day");
 
+            // جمع بيانات العطل لعرضها في عمود الملاحظات
             const vacationList = employees.filter(e => e.isVacation && e.vStart);
 
             let dayPointer = 0;
@@ -579,6 +581,7 @@
                 const dateObj = new Date(year, month - 1, day);
                 const dayName = arabicDays[dateObj.getDay()];
 
+                // الموظفون النهاريون النشطون لهذا اليوم
                 const activeDayStaff = dayStaff.filter(s => !isPersonOnVacation(s, isoDate));
 
                 // تعيين الصباح (1 إلى 3 موظفين)
@@ -598,13 +601,15 @@
                 }
                 dayPointer += (mCount + eCount);
 
-                // تعيين الليل
-                let nightShiftText = "---";
-                if (nightStaff.length >= 2) {
-                    const pair1 = nightStaff.slice(0, 2).map(e => e.name).join(" + ");
-                    const pair2 = (nightStaff.length >= 4) ? nightStaff.slice(2, 4).map(e => e.name).join(" + ") : pair1;
-                    nightShiftText = ((day - 1) % 2 === 0) ? pair1 : pair2;
-                }
+                // تعيين المداومة الليلية مع استبعاد الموظفين المعنيين بالعطلة ديناميكياً
+                let team1 = nightStaff.slice(0, 2);
+                let team2 = (nightStaff.length >= 4) ? nightStaff.slice(2, 4) : nightStaff.slice(2);
+                let scheduledNightTeam = ((day - 1) % 2 === 0) ? team1 : team2;
+                if (scheduledNightTeam.length === 0) scheduledNightTeam = team1;
+
+                // تصفية أفراد المناوبة الليلية والتأكد من عدم وجودهم في عطلة بهذا التاريخ
+                let activeNightMembers = scheduledNightTeam.filter(s => !isPersonOnVacation(s, isoDate));
+                let nightShiftText = activeNightMembers.length > 0 ? activeNightMembers.map(e => e.name).join(" + ") : "---";
 
                 const tr = document.createElement("tr");
                 let rowHTML = `
@@ -615,7 +620,7 @@
                     <td contenteditable="true">${nightShiftText}</td>
                 `;
 
-                // عمود الملاحظات المدمج
+                // عمود الملاحظات
                 if (day === 1) {
                     rowHTML += `
                         <td rowspan="${vacationRowsCount}" class="col-notes">
