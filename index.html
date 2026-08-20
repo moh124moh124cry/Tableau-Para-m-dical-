@@ -7,6 +7,10 @@
     <style>
         :root {
             --primary: #1e3a8a;
+            --primary-hover: #172554;
+            --success: #15803d;
+            --danger: #b91c1c;
+            --bg-light: #f8fafc;
             --border: #000;
         }
 
@@ -18,26 +22,39 @@
         }
 
         body {
-            background-color: #e5e7eb;
-            color: #000;
-            padding: 10px;
+            background-color: #f1f5f9;
+            color: #0f172a;
+            padding: 12px;
         }
 
-        /* لوحة التحكم - لا تظهر في الطباعة */
+        /* لوحة التحكم والإدارة */
         .no-print {
             background: #ffffff;
-            padding: 18px;
-            border-radius: 10px;
-            max-width: 1000px;
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 1050px;
             margin: 0 auto 20px auto;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
         }
 
-        .grid-3 {
+        .section-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 12px;
+            padding-bottom: 4px;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .grid-layout {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 12px;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
         }
 
         .form-group {
@@ -47,17 +64,59 @@
         }
 
         label {
-            font-weight: bold;
+            font-weight: 700;
+            font-size: 12px;
+            color: #334155;
+        }
+
+        input, select {
+            padding: 8px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            background: #fff;
+        }
+
+        input:focus, select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+
+        /* جدول إدارة الموظفين */
+        .staff-management {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 15px;
+        }
+
+        .staff-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: #fff;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .staff-table th, .staff-table td {
+            border: 1px solid #e2e8f0;
+            padding: 6px 10px;
+            text-align: right;
             font-size: 12px;
         }
 
-        input, select, textarea {
-            padding: 8px 10px;
-            border: 1px solid #9ca3af;
-            border-radius: 6px;
-            font-size: 13px;
+        .staff-table th {
+            background: #f1f5f9;
+            font-weight: bold;
         }
 
+        .badge-active { color: #166534; font-weight: bold; }
+        .badge-vacation { color: #991b1b; font-weight: bold; }
+
+        /* الأزرار */
         .btn-group {
             display: flex;
             flex-wrap: wrap;
@@ -69,25 +128,35 @@
             padding: 9px 16px;
             border: none;
             border-radius: 6px;
-            font-weight: bold;
+            font-weight: 700;
+            font-size: 13px;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
             transition: 0.2s;
         }
 
-        .btn-primary { background: #2563eb; color: #fff; }
-        .btn-primary:hover { background: #1d4ed8; }
-        .btn-print { background: #1f2937; color: #fff; }
-        .btn-print:hover { background: #111827; }
-        .btn-danger { background: #dc2626; color: #fff; padding: 4px 8px; font-size: 11px; }
+        .btn-generate { background: #2563eb; color: #fff; }
+        .btn-generate:hover { background: #1d4ed8; }
+        .btn-pdf { background: #059669; color: #fff; }
+        .btn-pdf:hover { background: #047857; }
+        .btn-print { background: #334155; color: #fff; }
+        .btn-print:hover { background: #1e293b; }
+        .btn-add { background: #10b981; color: #fff; }
+        .btn-add:hover { background: #059669; }
+        .btn-delete { background: #ef4444; color: #fff; padding: 4px 8px; font-size: 11px; }
+        .btn-delete:hover { background: #dc2626; }
 
-        /* الورقة الرسمية */
+        /* ورقة الجدول الرسمية */
         .sheet-container {
             background: #ffffff;
             width: 100%;
             max-width: 980px;
             margin: 0 auto;
-            padding: 25px 25px 15px 25px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            padding: 25px 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
         }
 
         .official-head {
@@ -96,9 +165,9 @@
             margin-bottom: 8px;
         }
 
-        .official-head h3 { font-size: 15px; font-weight: bold; }
-        .official-head h4 { font-size: 13.5px; font-weight: bold; }
-        .official-head .doc-num { font-size: 12px; font-weight: bold; margin-top: 2px; }
+        .official-head h3 { font-size: 15px; font-weight: 800; }
+        .official-head h4 { font-size: 13.5px; font-weight: 700; }
+        .official-head .doc-num { font-size: 12px; font-weight: 700; margin-top: 2px; }
         .official-head .main-title {
             font-size: 16px;
             font-weight: 900;
@@ -107,11 +176,11 @@
         }
         .official-head .center-title {
             font-size: 14px;
-            font-weight: bold;
+            font-weight: 800;
             margin-top: 2px;
         }
 
-        /* الجدول الرسمي المطابق للأصل */
+        /* الجدول الرسمي */
         .schedule-table {
             width: 100%;
             border-collapse: collapse;
@@ -150,12 +219,12 @@
         }
 
         .note-vacation-item {
-            margin-bottom: 8px;
+            margin-bottom: 7px;
             font-weight: bold;
         }
 
         .note-legal-box {
-            font-size: 9.5px;
+            font-size: 9px;
             line-height: 1.2;
             text-align: center;
             font-weight: bold;
@@ -185,9 +254,7 @@
             text-align: center;
         }
 
-        .signatures-area > div {
-            width: 32%;
-        }
+        .signatures-area > div { width: 32%; }
 
         .credits {
             text-align: center;
@@ -199,7 +266,7 @@
             padding-top: 4px;
         }
 
-        /* تحسينات الطباعة A4 */
+        /* الطباعة والتصدير */
         @media print {
             body {
                 background: #fff;
@@ -227,9 +294,7 @@
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
-            .signatures-area {
-                margin-top: 25px;
-            }
+            .signatures-area { margin-top: 25px; }
         }
     </style>
 </head>
@@ -237,9 +302,8 @@
 
     <!-- لوحة التحكم -->
     <div class="no-print">
-        <h2 style="font-size: 16px; margin-bottom: 12px; color: #1e3a8a;">⚙️ إعدادات جدول المداومة الطبية والشبه طبية</h2>
-        
-        <div class="grid-3">
+        <div class="section-title">⚙️ الإعدادات العامة للجدول والمؤسسة</div>
+        <div class="grid-layout">
             <div class="form-group">
                 <label>الشهر والسنة:</label>
                 <input type="month" id="selectedMonth" value="2026-08">
@@ -264,17 +328,83 @@
                 <label>ملاحظة الساعات العادية:</label>
                 <input type="text" id="inDayShiftNote" value="ملاحظة: علواني ف تعمل الساعات العادية (08:00 إلى 12:00 و 13:00 إلى 16:30)">
             </div>
+            <div class="form-group">
+                <label>عدد موظفي الصباح (08 إلى 14):</label>
+                <select id="morningStaffCount">
+                    <option value="1">1 موظف</option>
+                    <option value="2">2 موظفين</option>
+                    <option value="3" selected>3 موظفين</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>عدد موظفي المساء (14 إلى 20):</label>
+                <select id="eveningStaffCount">
+                    <option value="1">1 موظف</option>
+                    <option value="2" selected>2 موظفين</option>
+                    <option value="3">3 موظفين</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- إدارة الموظفين -->
+        <div class="staff-management">
+            <div class="section-title">👥 إضافة وتعديل قائمة الموظفين والعطل</div>
+            <div class="grid-layout">
+                <div class="form-group">
+                    <label>اسم الموظف:</label>
+                    <input type="text" id="staffNameInput" placeholder="مثال: حمان ع">
+                </div>
+                <div class="form-group">
+                    <label>نوع التعيين:</label>
+                    <select id="staffDutyType">
+                        <option value="day">فترة نهارية (صباح / مساء)</option>
+                        <option value="night">فترة ليلية (20 سا إلى 08 سا)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>حالة الموظف:</label>
+                    <select id="staffVacationStatus" onchange="toggleVacationFields()">
+                        <option value="active">نشط (يعمل)</option>
+                        <option value="vacation">في عطلة</option>
+                    </select>
+                </div>
+                <div class="form-group" id="vStartGroup" style="display:none;">
+                    <label>تاريخ بداية العطلة:</label>
+                    <input type="date" id="staffVStart">
+                </div>
+                <div class="form-group" id="vEndGroup" style="display:none;">
+                    <label>تاريخ نهاية العطلة:</label>
+                    <input type="date" id="staffVEnd">
+                </div>
+                <div class="form-group" style="align-self: flex-end;">
+                    <button class="btn-add" onclick="addNewEmployee()">+ إضافة الموظف</button>
+                </div>
+            </div>
+
+            <table class="staff-table">
+                <thead>
+                    <tr>
+                        <th>الاسم</th>
+                        <th>الفترة</th>
+                        <th>الحالة</th>
+                        <th>تاريخ بداية العطلة</th>
+                        <th>تاريخ نهاية العطلة</th>
+                        <th style="text-align:center;">إجراء</th>
+                    </tr>
+                </thead>
+                <tbody id="staffTableList"></tbody>
+            </table>
         </div>
 
         <div class="btn-group">
-            <button class="btn-primary" onclick="generateSchedule()">⚡ إعادة توليد وتحديث الجدول</button>
-            <button class="btn-print" onclick="window.print()">🖨️ طباعة / حفظ كـ PDF</button>
+            <button class="btn-generate" onclick="generateSchedule()">⚡ إعادة توليد وتحديث الجدول</button>
+            <button class="btn-pdf" onclick="exportToPdf()">📄 تصدير PDF</button>
+            <button class="btn-print" onclick="window.print()">🖨️ طباعة فورية</button>
         </div>
-        <p style="font-size: 11px; color: #6b7280; margin-top: 8px;">💡 ملاحظة: يمكنك النقر على أي اسم في الجدول مباشرة لتعديله أو تصحيحه يدوياً قبل الطباعة.</p>
     </div>
 
-    <!-- وثيقة الجدول الرسمية -->
-    <div class="sheet-container">
+    <!-- وثيقة الجدول الرسمية المعروضة -->
+    <div class="sheet-container" id="printableDocument">
         
         <div class="official-head">
             <h3>الجمهورية الجزائرية الديمقراطية الشعبية</h3>
@@ -282,7 +412,7 @@
             <h4 id="outFacility">مديرية الصحة و السكان لولاية النعامة</h4>
             <h4 id="outSubFacility">المؤسسة العمومية للصحة الجوارية بالعين الصفراء</h4>
             <div class="doc-num">رقم: <span id="outDocNum">............ /م-ع-ص-ج/ ع-ص/26</span></div>
-            <div class="main-title" id="outMainTitle">جدول المداومة الشبه الطبية لشهر اوت 2026</div>
+            <div class="main-title" id="outMainTitle">جدول المداومة الشبه الطبية لشهر أوت 2026</div>
             <div class="center-title" id="outCenter">بالمركز الصحي عنبة بوبكر * مغرار *</div>
         </div>
 
@@ -297,9 +427,7 @@
                     <th class="col-notes">ملاحظة</th>
                 </tr>
             </thead>
-            <tbody id="scheduleBody">
-                <!-- يتم توليد الأسطر بدقة عبر الجافاسكريبت -->
-            </tbody>
+            <tbody id="scheduleBody"></tbody>
         </table>
 
         <div class="sub-notes" id="outDayShiftNote">
@@ -326,22 +454,97 @@
 
     <script>
         const arabicDays = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
-        const arabicMonths = ["جانفي", "فيفري", "مارس", "افريل", "ماي", "جوان", "جويلية", "اوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+        const arabicMonths = ["جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان", "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
 
-        // قائمة العطل الثابتة
-        const vacationData = [
-            { name: "خزان ف", text: "خزان ف عطلة<br>ابتداءا من<br>2026/07/16" },
-            { name: "بن يوس علي", text: "بن يوس علي<br>عطلة ابتداءا من<br>2026/07/15" },
-            { name: "ثليجي ن", text: "ثليجي ن عطلة<br>ابتداءا من<br>2026/08/10" },
-            { name: "مكي ربيع", text: "مكي ربيع عطلة<br>ابتداءا من<br>2026/08/01" }
+        // قائمة الموظفين الديناميكية
+        let employees = [
+            { name: "حمان ف", type: "day", isVacation: false, vStart: "", vEnd: "" },
+            { name: "عيساوي ر", type: "day", isVacation: false, vStart: "", vEnd: "" },
+            { name: "خليفي ع", type: "day", isVacation: false, vStart: "", vEnd: "" },
+            { name: "بن عاشور ر", type: "day", isVacation: false, vStart: "", vEnd: "" },
+            { name: "لزرق س", type: "day", isVacation: false, vStart: "", vEnd: "" },
+            { name: "ثليجي ن", type: "day", isVacation: true, vStart: "2026-08-10", vEnd: "2026-08-31" },
+            { name: "حمان ع", type: "night", isVacation: false, vStart: "", vEnd: "" },
+            { name: "بوعامر م", type: "night", isVacation: false, vStart: "", vEnd: "" },
+            { name: "سحنون ع غ", type: "night", isVacation: false, vStart: "", vEnd: "" },
+            { name: "سايح ن", type: "night", isVacation: false, vStart: "", vEnd: "" },
+            { name: "خزان ف", type: "day", isVacation: true, vStart: "2026-07-16", vEnd: "2026-08-31" },
+            { name: "بن يوس علي", type: "day", isVacation: true, vStart: "2026-07-15", vEnd: "2026-08-31" },
+            { name: "مكي ربيع", type: "day", isVacation: true, vStart: "2026-08-01", vEnd: "2026-08-31" }
         ];
+
+        function toggleVacationFields() {
+            const status = document.getElementById("staffVacationStatus").value;
+            const show = (status === "vacation");
+            document.getElementById("vStartGroup").style.display = show ? "flex" : "none";
+            document.getElementById("vEndGroup").style.display = show ? "flex" : "none";
+        }
+
+        function renderEmployeesList() {
+            const tbody = document.getElementById("staffTableList");
+            tbody.innerHTML = "";
+
+            employees.forEach((emp, index) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong>${emp.name}</strong></td>
+                    <td>${emp.type === "night" ? "ليلي" : "نهاري"}</td>
+                    <td>${emp.isVacation ? '<span class="badge-vacation">عطلة</span>' : '<span class="badge-active">نشط</span>'}</td>
+                    <td>${emp.vStart || '-'}</td>
+                    <td>${emp.vEnd || '-'}</td>
+                    <td style="text-align:center;">
+                        <button class="btn-delete" onclick="deleteEmployee(${index})">حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function addNewEmployee() {
+            const nameInput = document.getElementById("staffNameInput");
+            const name = nameInput.value.trim();
+            const type = document.getElementById("staffDutyType").value;
+            const isVac = document.getElementById("staffVacationStatus").value === "vacation";
+            const vStart = document.getElementById("staffVStart").value;
+            const vEnd = document.getElementById("staffVEnd").value;
+
+            if (!name) {
+                alert("يرجى إدخال اسم الموظف");
+                return;
+            }
+
+            employees.push({
+                name: name,
+                type: type,
+                isVacation: isVac,
+                vStart: isVac ? vStart : "",
+                vEnd: isVac ? vEnd : ""
+            });
+
+            nameInput.value = "";
+            renderEmployeesList();
+            generateSchedule();
+        }
+
+        function deleteEmployee(index) {
+            employees.splice(index, 1);
+            renderEmployeesList();
+            generateSchedule();
+        }
+
+        function isPersonOnVacation(person, dateStr) {
+            if (!person.isVacation || !person.vStart) return false;
+            const cur = new Date(dateStr);
+            const start = new Date(person.vStart);
+            const end = person.vEnd ? new Date(person.vEnd) : new Date("2099-12-31");
+            return cur >= start && cur <= end;
+        }
 
         function getDaysInMonth(year, month) {
             return new Date(year, month, 0).getDate();
         }
 
         function generateSchedule() {
-            // تحديث العناوين الإدارية
             document.getElementById("outFacility").innerText = document.getElementById("inFacility").value;
             document.getElementById("outSubFacility").innerText = document.getElementById("inSubFacility").value;
             document.getElementById("outDocNum").innerText = document.getElementById("inDocNum").value;
@@ -352,78 +555,78 @@
             const [year, month] = monthVal.split("-").map(Number);
             document.getElementById("outMainTitle").innerText = `جدول المداومة الشبه الطبية لشهر ${arabicMonths[month - 1]} ${year}`;
 
+            const mCount = parseInt(document.getElementById("morningStaffCount").value);
+            const eCount = parseInt(document.getElementById("eveningStaffCount").value);
+
             const totalDays = getDaysInMonth(year, month);
             const tbody = document.getElementById("scheduleBody");
             tbody.innerHTML = "";
 
-            // الفرق الثابتة للمناوبة الليلية (تتناوب يوم بعد يوم)
-            const nightTeams = [
-                "حمان ع + بوعامر م",
-                "سحنون ع غ + سايح ن"
-            ];
+            const nightStaff = employees.filter(e => e.type === "night");
+            const dayStaff = employees.filter(e => e.type === "day");
 
-            // الفرق النهارية للفترة الأولى (قبل خروج ثليجي ن في عطلة يوم 10)
-            const period1DayShifts = [
-                { s1: "حمان ف+عيساوي ر +خليفي ع", s2: "بن عاشور ر + ثليجي ن" },
-                { s1: "بن عاشور ر + ثليجي ن", s2: "حمان ف+ عيساوي ر+خليفي ع" },
-                { s1: "حمان +عيساوي +خليفي ع", s2: "بن عاشور ر + ثليجي ن" },
-                { s1: "لزرق س+ خليفي ع", s2: "بن عاشور ر + ثليجي ن" },
-                { s1: "حمان ف +عيساوي ر", s2: "لزرق س+خليفي ع" },
-                { s1: "بن عاشور ر + ثليجي ن", s2: "حمان ف +عيساوي ر" },
-                { s1: "لزرق س+خليفي ع", s2: "بن عاشور ر + ثليجي ن" },
-                { s1: "حمان ف +عيساوي ر", s2: "لزرق س+خليفي ع" },
-                { s1: "بن عاشور ر + ثليجي ن", s2: "حمان ف +عيساوي ر" }
-            ];
+            // جمع بيانات العطل لعرضها في عمود الملاحظات
+            const vacationList = employees.filter(e => e.isVacation && e.vStart);
 
-            // نقطة تقسيم عمود الملاحظات (نصف للعطل والنصف الآخر للتنبيه القانوني)
-            const vacationRowsCount = 14; 
+            let dayPointer = 0;
+            const vacationRowsCount = 14;
             const legalRowsCount = totalDays - vacationRowsCount;
 
             for (let day = 1; day <= totalDays; day++) {
                 const dayPadded = String(day).padStart(2, '0');
                 const monthPadded = String(month).padStart(2, '0');
                 const dateStr = `${year}/${monthPadded}/${dayPadded}`;
+                const isoDate = `${year}-${monthPadded}-${dayPadded}`;
                 const dateObj = new Date(year, month - 1, day);
                 const dayName = arabicDays[dateObj.getDay()];
 
-                // تحديد وردية الليل (فريق 1 للأيام الفردية، فريق 2 للأيام الزوجية)
-                const nightShift = nightTeams[(day - 1) % 2];
+                // الموظفون النهاريون المتاحون لهذا اليوم
+                const activeDayStaff = dayStaff.filter(s => !isPersonOnVacation(s, isoDate));
 
-                // تحديد الورديات النهارية
-                let shiftMorning = "";
-                let shiftEvening = "";
-
-                if (day <= 9) {
-                    const p1 = period1DayShifts[day - 1];
-                    shiftMorning = p1.s1;
-                    shiftEvening = p1.s2;
-                } else {
-                    // بعد تاريخ 10 أوت: تناوب مستقر بين فرقتين نهائيتين
-                    if (day % 2 === 0) {
-                        shiftMorning = "لزرق س+ خليفي ع";
-                        shiftEvening = "بن عاشور + حمان +عيساوي";
-                    } else {
-                        shiftMorning = "بن عاشور + حمان +عيساوي";
-                        shiftEvening = "لزرق س+ خليفي ع";
+                // تعيين الصباح (1 إلى 3 موظفين)
+                let morningMembers = [];
+                for (let i = 0; i < mCount; i++) {
+                    if (activeDayStaff.length > 0) {
+                        morningMembers.push(activeDayStaff[(dayPointer + i) % activeDayStaff.length].name);
                     }
                 }
 
-                const tr = document.createElement("tr");
+                // تعيين المساء (1 إلى 3 موظفين)
+                let eveningMembers = [];
+                for (let i = 0; i < eCount; i++) {
+                    if (activeDayStaff.length > 0) {
+                        eveningMembers.push(activeDayStaff[(dayPointer + mCount + i) % activeDayStaff.length].name);
+                    }
+                }
+                dayPointer += (mCount + eCount);
 
+                // تعيين الليل (تناوب منتظم بين فرقتين)
+                let nightShiftText = "---";
+                if (nightStaff.length >= 2) {
+                    const pair1 = nightStaff.slice(0, 2).map(e => e.name).join(" + ");
+                    const pair2 = (nightStaff.length >= 4) ? nightStaff.slice(2, 4).map(e => e.name).join(" + ") : pair1;
+                    nightShiftText = ((day - 1) % 2 === 0) ? pair1 : pair2;
+                }
+
+                const tr = document.createElement("tr");
                 let rowHTML = `
                     <td contenteditable="true">${dayName}</td>
                     <td dir="ltr" contenteditable="true">${dateStr}</td>
-                    <td contenteditable="true">${shiftMorning}</td>
-                    <td contenteditable="true">${shiftEvening}</td>
-                    <td contenteditable="true">${nightShift}</td>
+                    <td contenteditable="true">${morningMembers.join(" + ")}</td>
+                    <td contenteditable="true">${eveningMembers.join(" + ")}</td>
+                    <td contenteditable="true">${nightShiftText}</td>
                 `;
 
-                // بناء عمود الملاحظات المدمج المطابق للأصل
+                // عمود الملاحظات المدمج
                 if (day === 1) {
                     rowHTML += `
                         <td rowspan="${vacationRowsCount}" class="col-notes">
                             <div class="note-vacation-box">
-                                ${vacationData.map(v => `<div class="note-vacation-item">${v.text}</div>`).join('')}
+                                ${vacationList.map(v => `
+                                    <div class="note-vacation-item">
+                                        ${v.name} عطلة<br>ابتداءا من<br>${v.vStart.replace(/-/g, '/')}
+                                    </div>
+                                `).join('')}
                             </div>
                         </td>
                     `;
@@ -445,7 +648,17 @@
             }
         }
 
-        // تشغيل أولي
+        function exportToPdf() {
+            // ضبط عنوان المستند ليحفظ الـ PDF تلقائياً باسم رسمي واضح
+            const originalTitle = document.title;
+            const mainTitle = document.getElementById("outMainTitle").innerText;
+            document.title = mainTitle;
+            window.print();
+            document.title = originalTitle;
+        }
+
+        // تشغيل أولي عند تحميل الصفحة
+        renderEmployeesList();
         generateSchedule();
     </script>
 </body>
