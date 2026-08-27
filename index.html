@@ -549,7 +549,7 @@
         }
 
         // ==========================================
-        // قاعدة بيانات المصالح المستقلة (9 مصالح)
+        // قاعدة بيانات المصالح المستقلة
         // ==========================================
         const defaultRemarks = {
             "ممتاز": "أداء متميز وانضباط عالي في العمل والمناوبات. يوصى بالتشجيع.",
@@ -602,11 +602,11 @@
                 shifts: { s1: "دورية الصباح (08-12)", s2: "دورية المساء (13-16)", s3: "فريق الإسناد والتدخل" },
                 employees: [
                     { name: "د. رحماني ك", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "ممرض: عثماني أ", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "سائق: بوزيد س", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
+                    { name: "عثماني أ", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "بوزيد س", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
                 teams: [
-                    { name: "طاقم الدورية الريفية", m1: "د. رحماني ك", m2: "ممرض: عثماني أ", m3: "سائق: بوزيد س" }
+                    { name: "طاقم الدورية الريفية", m1: "د. رحماني ك", m2: "عثماني أ", m3: "بوزيد س" }
                 ]
             },
             lab: {
@@ -614,11 +614,11 @@
                 label: "مصلحة المخبر",
                 shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
-                    { name: "مخبري: العربي ط", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "مخبري: زيان م", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
+                    { name: "العربي ط", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "زيان م", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
                 teams: [
-                    { name: "طاقم المخبر أ", m1: "مخبري: العربي ط", m2: "", m3: "" }
+                    { name: "طاقم المخبر أ", m1: "العربي ط", m2: "", m3: "" }
                 ]
             },
             radio: {
@@ -626,11 +626,11 @@
                 label: "مصلحة الأشعة",
                 shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
-                    { name: "تقني: مرابط ح", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "تقني: علالي ي", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
+                    { name: "مرابط ح", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "علالي ي", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
                 teams: [
-                    { name: "فريق الأشعة", m1: "تقني: مرابط ح", m2: "", m3: "" }
+                    { name: "فريق الأشعة", m1: "مرابط ح", m2: "", m3: "" }
                 ]
             },
             dental: {
@@ -638,11 +638,11 @@
                 label: "جراحة الأسنان",
                 shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "المداومة والاستعجالات" },
                 employees: [
-                    { name: "د. بوزيان (جراح أسنان)", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "مساعد: ناصري خ", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
+                    { name: "د. بوزيان", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "ناصري خ", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
                 teams: [
-                    { name: "عيادة الأسنان", m1: "د. بوزيان (جراح أسنان)", m2: "مساعد: ناصري خ", m3: "" }
+                    { name: "عيادة الأسنان", m1: "د. بوزيان", m2: "ناصري خ", m3: "" }
                 ]
             },
             receipts: {
@@ -650,11 +650,11 @@
                 label: "مكتب الإيرادات",
                 shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
-                    { name: "وكيل الإيرادات: فلاحي ع", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "عون الشباك: سماتي ر", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
+                    { name: "فلاحي ع", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "سماتي ر", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
                 teams: [
-                    { name: "مكتب الإيرادات", m1: "وكيل الإيرادات: فلاحي ع", m2: "", m3: "" }
+                    { name: "مكتب الإيرادات", m1: "فلاحي ع", m2: "", m3: "" }
                 ]
             },
             ambulance: {
@@ -662,11 +662,11 @@
                 label: "سائقي الإسعاف",
                 shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
-                    { name: "سائق: بوعمامة ع", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "سائق: لخضر م", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
+                    { name: "بوعمامة ع", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "لخضر م", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
                 teams: [
-                    { name: "فريق الإسعاف 1", m1: "سائق: بوعمامة ع", m2: "", m3: "" }
+                    { name: "فريق الإسعاف 1", m1: "بوعمامة ع", m2: "", m3: "" }
                 ]
             },
             security: {
@@ -674,11 +674,11 @@
                 label: "الحراسة والأمن",
                 shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
-                    { name: "حارس: بن علي ك", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "حارس: تواتي س", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
+                    { name: "بن علي ك", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "تواتي س", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
                 teams: [
-                    { name: "فريق الحراسة 1", m1: "حارس: بن علي ك", m2: "", m3: "" }
+                    { name: "فريق الحراسة 1", m1: "بن علي ك", m2: "", m3: "" }
                 ]
             }
         };
