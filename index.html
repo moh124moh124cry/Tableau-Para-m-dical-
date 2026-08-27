@@ -229,10 +229,26 @@
         .note-legal-box span { display: block; margin-bottom: 4px; }
         .sub-notes { margin-top: 6px; font-size: 12px; font-weight: bold; }
 
-        /* جدول تقرير الأداء الفردي */
-        .report-grid {
-            width: 100%; border-collapse: collapse; margin-top: 25px;
+        /* ترويسة التقرير الإدارية (المرسل والمستقبل) */
+        .report-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 20px;
+            margin-bottom: 25px;
+            text-align: right;
         }
+        .report-header-right { width: 50%; }
+        .report-header-left {
+            width: 45%;
+            border: 1.5px solid #000;
+            padding: 12px;
+            border-radius: 6px;
+            background: #fafafa;
+        }
+
+        /* جدول تقرير الأداء الفردي */
+        .report-grid { width: 100%; border-collapse: collapse; margin-top: 15px; }
         .report-grid th, .report-grid td {
             border: 1px solid #000; padding: 12px; text-align: right; font-size: 14px; font-weight: bold;
         }
@@ -280,7 +296,8 @@
             </div>
             <div class="form-group" style="margin-top:10px;">
                 <label>تقييم الأداء العام:</label>
-                <select id="evalRating">
+                <!-- إضافة onchange لتحديث الملاحظات التلقائية -->
+                <select id="evalRating" onchange="updateAutoRemarks()">
                     <option value="ممتاز">ممتاز</option>
                     <option value="جيد جداً">جيد جداً</option>
                     <option value="حسن">حسن</option>
@@ -289,7 +306,7 @@
                 </select>
             </div>
             <div class="form-group" style="margin-top:10px;">
-                <label>ملاحظات إدارية ومبررات:</label>
+                <label>ملاحظات إدارية ومبررات (تتحدث تلقائياً مع التقييم ويمكن التعديل عليها):</label>
                 <textarea id="evalRemarks" rows="3" placeholder="اكتب ملاحظاتك هنا..."></textarea>
             </div>
             <div class="btn-group" style="justify-content: flex-end; margin-top: 20px;">
@@ -321,7 +338,7 @@
                 <input type="text" id="inDocNum" value="............ /م-ع-ص-ج/ ع-ص/26">
             </div>
             <div class="form-group">
-                <label>المركز الصحي:</label>
+                <label>المركز الصحي (سيظهر كمرسل للتقرير):</label>
                 <input type="text" id="inCenter" value="المركز الصحي عنبة بوبكر * مغرار *">
             </div>
             <div class="form-group">
@@ -454,11 +471,22 @@
         <div class="official-head">
             <h3>الجمهورية الجزائرية الديمقراطية الشعبية</h3>
             <h3>وزارة الصحة</h3>
-            <h4 id="repFacility"></h4>
-            <h4 id="repSubFacility"></h4>
-            <div class="doc-num">رقم: <span id="repDocNum"></span></div>
-            <div class="main-title" style="margin-top:15px; margin-bottom:15px;">تقرير تقييم الأداء والمواظبة لموظف</div>
-            <div class="center-title" id="repCenter"></div>
+            
+            <div class="report-header-flex">
+                <div class="report-header-right">
+                    <h4 id="repFacility"></h4>
+                    <h4 id="repSubFacility"></h4>
+                    <div class="doc-num">رقم المراسلة: <span id="repDocNum"></span></div>
+                </div>
+                <div class="report-header-left">
+                    <div style="font-weight: bold; font-size: 14px;">إلى السيد(ة):</div>
+                    <div style="font-weight: 800; font-size: 15px; margin-bottom: 8px;">مدير المؤسسة العمومية للصحة الجوارية</div>
+                    <div style="font-weight: bold; font-size: 13px;">مرسل من طرف:</div>
+                    <div style="font-weight: 800; font-size: 14px;" id="repCenterFrom"></div>
+                </div>
+            </div>
+
+            <div class="main-title" style="font-size: 18px; margin-bottom: 20px;">تقرير تقييم الأداء والمواظبة لموظف</div>
         </div>
 
         <table class="report-grid">
@@ -500,21 +528,30 @@
         const arabicDays = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
         const arabicMonths = ["جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان", "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
 
-        // قائمة الموظفين مضافاً إليها حقول التقييم
+        // نصوص الملاحظات التلقائية حسب التقييم
+        const defaultRemarks = {
+            "ممتاز": "أداء متميز وانضباط عالي في العمل والمناوبات. يوصى بالتشجيع.",
+            "جيد جداً": "أداء جيد جداً ومواظبة مستمرة على المهام الموكلة.",
+            "حسن": "أداء مرضي، يرجى الاستمرار على هذا المستوى.",
+            "متوسط": "أداء متوسط، يحتاج إلى بذل المزيد من الجهد والانضباط بأوقات العمل.",
+            "ضعيف": "أداء ضعيف، لوحظ غياب وتأخر متكرر. يرجى تدارك النقائص والالتزام بالقوانين."
+        };
+
+        // قائمة الموظفين
         let employees = [
-            { name: "حمان ف", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: "" },
-            { name: "عيساوي ر", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: "" },
-            { name: "خليفي ع", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: "" },
-            { name: "بن عاشور ر", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: "" },
-            { name: "لزرق س", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: "" },
-            { name: "ثليجي ن", type: "day", isVacation: true, vStart: "2026-08-10", vEnd: "2026-08-31", absence: 0, delay: 0, rating: "جيد جداً", remarks: "عطلة سنوية" },
-            { name: "حمان ع", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: "" },
-            { name: "بوعامر م", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: "" },
-            { name: "سحنون ع غ", type: "night", isVacation: true, vStart: "2026-08-20", vEnd: "2026-09-11", absence: 0, delay: 0, rating: "ممتاز", remarks: "عطلة سنوية" },
-            { name: "سايح ن", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: "" },
-            { name: "خزان ف", type: "day", isVacation: true, vStart: "2026-07-16", vEnd: "2026-08-31", absence: 0, delay: 0, rating: "حسن", remarks: "" },
-            { name: "بن يوس علي", type: "day", isVacation: true, vStart: "2026-07-15", vEnd: "2026-08-31", absence: 0, delay: 0, rating: "متوسط", remarks: "" },
-            { name: "مكي ربيع", type: "day", isVacation: true, vStart: "2026-08-01", vEnd: "2026-08-31", absence: 0, delay: 0, rating: "ممتاز", remarks: "" }
+            { name: "حمان ف", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+            { name: "عيساوي ر", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+            { name: "خليفي ع", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+            { name: "بن عاشور ر", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+            { name: "لزرق س", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+            { name: "ثليجي ن", type: "day", isVacation: true, vStart: "2026-08-10", vEnd: "2026-08-31", absence: 0, delay: 0, rating: "جيد جداً", remarks: "في عطلة سنوية مبرمجة." },
+            { name: "حمان ع", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+            { name: "بوعامر م", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+            { name: "سحنون ع غ", type: "night", isVacation: true, vStart: "2026-08-20", vEnd: "2026-09-11", absence: 0, delay: 0, rating: "ممتاز", remarks: "في عطلة سنوية مبرمجة." },
+            { name: "سايح ن", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+            { name: "خزان ف", type: "day", isVacation: true, vStart: "2026-07-16", vEnd: "2026-08-31", absence: 0, delay: 0, rating: "حسن", remarks: defaultRemarks["حسن"] },
+            { name: "بن يوس علي", type: "day", isVacation: true, vStart: "2026-07-15", vEnd: "2026-08-31", absence: 0, delay: 0, rating: "متوسط", remarks: defaultRemarks["متوسط"] },
+            { name: "مكي ربيع", type: "day", isVacation: true, vStart: "2026-08-01", vEnd: "2026-08-31", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
         ];
 
         let configuredTeams = [
@@ -621,7 +658,10 @@
 
             if (!name) return alert("يرجى إدخال اسم الموظف");
 
-            employees.push({ name, type, isVacation: isVac, vStart: isVac ? vStart : "", vEnd: isVac ? vEnd : "", absence: 0, delay: 0, rating: "ممتاز", remarks: "" });
+            employees.push({ 
+                name, type, isVacation: isVac, vStart: isVac ? vStart : "", vEnd: isVac ? vEnd : "", 
+                absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] 
+            });
             document.getElementById("staffNameInput").value = "";
             renderEmployeesList();
             generateSchedule();
@@ -633,7 +673,7 @@
             generateSchedule();
         }
 
-        // --- وظائف نافذة التقييم ---
+        // --- وظائف نافذة التقييم والملاحظات التلقائية ---
         function openModal(index) {
             currentEditIndex = index;
             const emp = employees[index];
@@ -641,8 +681,16 @@
             document.getElementById("evalAbsence").value = emp.absence || 0;
             document.getElementById("evalDelay").value = emp.delay || 0;
             document.getElementById("evalRating").value = emp.rating || "ممتاز";
-            document.getElementById("evalRemarks").value = emp.remarks || "";
+            
+            // إذا لم تكن هناك ملاحظات محفوظة، ضع الملاحظة التلقائية
+            document.getElementById("evalRemarks").value = emp.remarks || defaultRemarks[emp.rating || "ممتاز"];
+            
             document.getElementById("evalModal").style.display = "flex";
+        }
+
+        function updateAutoRemarks() {
+            const rating = document.getElementById("evalRating").value;
+            document.getElementById("evalRemarks").value = defaultRemarks[rating] || "";
         }
 
         function closeModal() {
@@ -664,20 +712,28 @@
         // --- وظيفة طباعة التقرير الفردي بذكاء ---
         function printIndividualReport() {
             if (currentEditIndex === -1) return;
-            const emp = employees[currentEditIndex];
             
-            // حفظ التعديلات في المودال قبل الطباعة
-            saveEvaluation();
+            // حفظ التعديلات في المودال قبل الطباعة لتظهر في الورقة
+            if (currentEditIndex > -1) {
+                employees[currentEditIndex].absence = document.getElementById("evalAbsence").value;
+                employees[currentEditIndex].delay = document.getElementById("evalDelay").value;
+                employees[currentEditIndex].rating = document.getElementById("evalRating").value;
+                employees[currentEditIndex].remarks = document.getElementById("evalRemarks").value;
+            }
+            
+            const emp = employees[currentEditIndex];
 
             // نسخ الترويسات الرسمية من الإعدادات
             document.getElementById("repFacility").innerText = document.getElementById("inFacility").value;
             document.getElementById("repSubFacility").innerText = document.getElementById("inSubFacility").value;
             document.getElementById("repDocNum").innerText = document.getElementById("inDocNum").value;
-            document.getElementById("repCenter").innerText = document.getElementById("inCenter").value;
+            
+            // تحديث اسم المركز كمُرسِل للتقرير
+            document.getElementById("repCenterFrom").innerText = document.getElementById("inCenter").value;
 
             // تعبئة بيانات التقرير
             document.getElementById("repEmpName").innerText = emp.name;
-            document.getElementById("repEmpType").innerText = emp.type === "night" ? "فترة ليلية (20 إلى 08)" : "فترة نهارية (صباح ومساء)";
+            document.getElementById("repEmpType").innerText = emp.type === "night" ? "فترة ليلية (20 سا إلى 08 سا)" : "فترة نهارية (صباح ومساء)";
             document.getElementById("repEmpAbsence").innerText = emp.absence + " يوم / أيام";
             document.getElementById("repEmpDelay").innerText = emp.delay + " ساعة / ساعات";
             document.getElementById("repEmpRating").innerText = emp.rating;
@@ -689,13 +745,15 @@
 
             // أمر الطباعة
             const originalTitle = document.title;
-            document.title = "تقرير_الموظف_" + emp.name;
+            document.title = "تقرير_تقييم_الموظف_" + emp.name.replace(/\s+/g, '_');
             window.print();
             
-            // إعادة الوضع الطبيعي بعد الطباعة
+            // إعادة الوضع الطبيعي بعد الطباعة وإغلاق النافذة
             document.title = originalTitle;
             document.getElementById("printableReport").style.display = "none";
             document.getElementById("printableSchedule").style.display = "block";
+            renderEmployeesList();
+            closeModal();
         }
 
         function isPersonOnVacation(personName, dateStr) {
@@ -805,7 +863,7 @@
 
         function exportToPdf() {
             const originalTitle = document.title;
-            document.title = document.getElementById("outMainTitle").innerText;
+            document.title = document.getElementById("outMainTitle").innerText.replace(/\s+/g, '_');
             printSchedule();
             document.title = originalTitle;
         }
