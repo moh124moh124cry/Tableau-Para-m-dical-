@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>جدول المناوبة وتقييم الموظفين | All World Digital</title>
+    <title>جدول المداومة وتقييم الموظفين | All World Digital</title>
     <style>
         :root {
             --primary: #1e3a8a;
@@ -12,7 +12,6 @@
             --danger: #b91c1c;
             --info: #0284c7;
             --bg-light: #f8fafc;
-            --border: #000;
         }
 
         * {
@@ -28,38 +27,9 @@
             padding: 12px;
         }
 
-        /* شاشة التفعيل (نظام الحماية) */
-        #activationScreen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #f1f5f9;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .activation-box {
-            background: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            border-top: 5px solid var(--primary);
-        }
-
-        .activation-box h2 { color: var(--primary); margin-bottom: 10px; }
-        .activation-box p { font-size: 13px; color: #64748b; margin-bottom: 20px; }
-        .activation-box input {
-            width: 100%; padding: 12px; font-size: 16px; text-align: center;
-            border: 2px solid #cbd5e1; border-radius: 8px; margin-bottom: 15px;
-            text-transform: uppercase;
-        }
-        .activation-box button { width: 100%; padding: 12px; font-size: 15px; }
-
-        /* لوحة التحكم الإدارية */
+        /* =========================================
+           واجهة الإدارة ولوحة التحكم (لا تظهر في الطباعة)
+           ========================================= */
         .no-print {
             background: #ffffff;
             padding: 20px;
@@ -76,12 +46,10 @@
             display: flex; align-items: center; gap: 6px;
         }
 
-        /* التخطيط الشبكي المتجاوب */
         .grid-layout {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-            margin-bottom: 15px;
+            gap: 15px; margin-bottom: 15px;
         }
 
         .form-group { display: flex; flex-direction: column; gap: 4px; }
@@ -94,7 +62,6 @@
             border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
         }
 
-        /* حقول مقفلة */
         .locked-input {
             background-color: #e2e8f0 !important; color: #475569;
             cursor: not-allowed; font-weight: bold;
@@ -108,31 +75,19 @@
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 8px; font-weight: bold; font-size: 13px; color: #1e3a8a;
         }
-        .team-selects {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;
-        }
+        .team-selects { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
 
         .staff-management {
             background: #f8fafc; padding: 12px; border-radius: 8px;
             border: 1px solid #e2e8f0; margin-bottom: 15px;
         }
 
-        /* حاوية مرنة للجداول على الهواتف */
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            margin-top: 10px;
-            padding-bottom: 5px;
-        }
-
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .staff-table {
             width: 100%; min-width: 600px; border-collapse: collapse;
             background: #fff; border-radius: 6px; overflow: hidden;
         }
-        .staff-table th, .staff-table td {
-            border: 1px solid #e2e8f0; padding: 8px 10px; text-align: right; font-size: 12px;
-        }
+        .staff-table th, .staff-table td { border: 1px solid #e2e8f0; padding: 8px 10px; text-align: right; font-size: 12px; }
         .staff-table th { background: #f1f5f9; font-weight: bold; }
 
         .badge-active { color: #166534; font-weight: bold; }
@@ -141,128 +96,149 @@
         .btn-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
         button {
             padding: 9px 16px; border: none; border-radius: 6px; font-weight: 700;
-            font-size: 13px; cursor: pointer; display: inline-flex; align-items: center;
-            justify-content: center; gap: 6px; transition: 0.2s;
+            font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
         }
         .btn-generate { background: #2563eb; color: #fff; }
-        .btn-generate:hover { background: #1d4ed8; }
         .btn-pdf { background: #059669; color: #fff; }
-        .btn-pdf:hover { background: #047857; }
         .btn-print { background: #334155; color: #fff; }
-        .btn-print:hover { background: #1e293b; }
         .btn-add { background: #10b981; color: #fff; }
-        .btn-add:hover { background: #059669; }
         .btn-secondary { background: #475569; color: #fff; }
-        .btn-secondary:hover { background: #334155; }
         .btn-delete { background: #ef4444; color: #fff; padding: 4px 8px; font-size: 11px; }
-        .btn-delete:hover { background: #dc2626; }
         .btn-eval { background: var(--info); color: #fff; padding: 4px 8px; font-size: 11px; }
-        .btn-eval:hover { background: #0369a1; }
 
-        /* النافذة المنبثقة للتقييم */
+        /* =========================================
+           شاشة التفعيل والنافذة المنبثقة
+           ========================================= */
+        #activationScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #f1f5f9; z-index: 9999; display: flex; align-items: center; justify-content: center;
+        }
+        .activation-box {
+            background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center; max-width: 400px; width: 90%; border-top: 5px solid var(--primary);
+        }
+        .activation-box h2 { color: var(--primary); margin-bottom: 10px; }
+        .activation-box input {
+            width: 100%; padding: 12px; font-size: 16px; text-align: center;
+            border: 2px solid #cbd5e1; border-radius: 8px; margin-bottom: 15px; text-transform: uppercase;
+        }
+
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;
         }
-        .modal-content {
-            background: #fff; width: 95%; max-width: 500px; padding: 20px;
-            border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
-        .modal-header {
-            font-size: 16px; font-weight: bold; margin-bottom: 15px; color: var(--primary);
-            border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;
+        .modal-content { background: #fff; width: 95%; max-width: 500px; padding: 20px; border-radius: 12px; }
+        .modal-header { font-size: 16px; font-weight: bold; margin-bottom: 15px; color: var(--primary); border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
+
+
+        /* =========================================
+           تصميم الورقة الرسمية (يطابق الصورة الأصلية 100%)
+           ========================================= */
+        .sheet-wrapper {
+            width: 100%;
+            overflow-x: auto; /* للسماح بالسحب على الهاتف دون تشويه الورقة */
+            padding-bottom: 20px;
         }
 
-        /* الورقة الرسمية */
         .sheet-container {
-            background: #ffffff; width: 100%; max-width: 980px; margin: 0 auto;
-            padding: 25px 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+            background: #ffffff;
+            width: 100%;
+            min-width: 850px; /* إجبار الورقة على أخذ حجم A4 حتى في الهاتف */
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 30px 40px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+            color: #000 !important; /* أسود داكن للطباعة */
         }
 
-        .official-head { text-align: center; line-height: 1.35; margin-bottom: 8px; }
-        .official-head h3 { font-size: 15px; font-weight: 800; }
-        .official-head h4 { font-size: 13.5px; font-weight: 700; }
-        .official-head .doc-num { font-size: 12px; font-weight: 700; margin-top: 2px; }
-        .official-head .main-title { font-size: 16px; font-weight: 900; text-decoration: underline; margin-top: 4px; }
-        .official-head .center-title { font-size: 14px; font-weight: 800; margin-top: 2px; }
+        .official-head { line-height: 1.4; margin-bottom: 15px; color: #000; }
+        
+        .head-center-top { text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 15px; }
+        
+        .head-right-block { text-align: right; font-weight: bold; font-size: 15px; margin-bottom: 15px; }
+        
+        .head-title-block { text-align: center; font-weight: bold; margin-bottom: 10px; }
+        .head-title-block .main-title { font-size: 18px; text-decoration: underline; margin-bottom: 5px; font-weight: 900; }
+        .head-title-block .center-name { font-size: 16px; font-weight: 900; }
 
         .schedule-table {
-            width: 100%; min-width: 800px; /* لضمان عدم تشوه الجدول عند السحب في الهاتف */
-            border-collapse: collapse; margin-top: 6px; table-layout: fixed;
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed; /* ضروري لثبات حجم الأعمدة */
+            margin-bottom: 5px;
         }
+
         .schedule-table th, .schedule-table td {
-            border: 1.5px solid #000; padding: 3px 2px; text-align: center;
-            font-size: 11px; font-weight: bold; color: #000; vertical-align: middle; word-wrap: break-word;
-        }
-        .schedule-table th { background-color: #f3f4f6; font-size: 11.5px; }
-
-        .col-day { width: 8.5%; } .col-date { width: 12%; }
-        .col-shift1 { width: 23.5%; } .col-shift2 { width: 23.5%; }
-        .col-shift3 { width: 19%; } .col-notes { width: 13.5%; }
-
-        .note-vacation-box { font-size: 10px; line-height: 1.25; text-align: center; padding: 2px; }
-        .note-vacation-item { margin-bottom: 7px; font-weight: bold; }
-        .note-legal-box { font-size: 9px; line-height: 1.2; text-align: center; font-weight: bold; padding: 2px; }
-        .note-legal-box span { display: block; margin-bottom: 4px; }
-        .sub-notes { margin-top: 6px; font-size: 12px; font-weight: bold; }
-
-        .report-header-flex {
-            display: flex; justify-content: space-between; align-items: flex-start;
-            margin-top: 20px; margin-bottom: 25px; text-align: right; gap: 15px;
-        }
-        .report-header-right { width: 50%; }
-        .report-header-left {
-            width: 45%; border: 1.5px solid #000; padding: 12px; border-radius: 6px; background: #fafafa;
+            border: 1.5px solid #000; /* حدود سوداء سميكة مثل الأصل */
+            padding: 4px 2px;
+            text-align: center;
+            font-size: 12.5px;
+            font-weight: 900 !important; /* خط عريض جداً مثل الأصل */
+            color: #000;
+            vertical-align: middle;
+            word-wrap: break-word;
         }
 
-        .report-grid { width: 100%; min-width: 600px; border-collapse: collapse; margin-top: 15px; }
-        .report-grid th, .report-grid td {
-            border: 1px solid #000; padding: 12px; text-align: right; font-size: 14px; font-weight: bold;
-        }
-        .report-grid th { background: #f3f4f6; width: 35%; }
+        .schedule-table th { background-color: #f2f2f2; font-size: 13px; }
+
+        /* نسب الأعمدة مطابقة للصورة الأصلية */
+        .col-day { width: 7%; }
+        .col-date { width: 11%; }
+        .col-shift1 { width: 23.5%; }
+        .col-shift2 { width: 23.5%; }
+        .col-shift3 { width: 19%; }
+        .col-notes { width: 16%; }
+
+        .note-vacation-box { font-size: 12px; line-height: 1.4; text-align: center; padding: 2px; }
+        .note-vacation-item { margin-bottom: 12px; font-weight: 900; }
         
+        .note-legal-box { font-size: 11px; line-height: 1.3; text-align: center; font-weight: 900; padding: 2px; }
+        .note-legal-box span { display: block; margin-bottom: 5px; }
+        
+        .sub-notes { font-size: 13px; font-weight: 900; color: #000; text-align: right; margin-top: 5px; }
+
         .signatures-area {
             display: flex; justify-content: space-between; align-items: flex-start;
-            margin-top: 35px; padding: 0 10px; font-size: 12px; font-weight: bold; text-align: center;
+            margin-top: 40px; padding: 0 10px; font-size: 14px; font-weight: 900; text-align: center; color: #000;
         }
-        .signatures-area > div { width: 32%; }
+        .signatures-area > div { width: 32%; text-decoration: underline; text-underline-offset: 4px; }
+        
         .credits {
             text-align: center; font-size: 11px; font-family: monospace; font-weight: bold;
-            margin-top: 25px; border-top: 1px dashed #777; padding-top: 4px;
+            margin-top: 30px; border-top: 1px dashed #777; padding-top: 4px; color: #333;
         }
 
-        /* ========================================================
-           تعديلات التجاوب (Responsive) لشاشات الهواتف المحمولة
-           ======================================================== */
-        @media (max-width: 768px) {
-            body { padding: 5px; }
-            .no-print { padding: 15px; }
-            .grid-layout { grid-template-columns: 1fr; gap: 10px; }
-            /* جعل الحقول التي تأخذ مساحة مزدوجة تأخذ مساحة مفردة على الهاتف */
-            .form-group[style*="grid-column: span 2"] { grid-column: span 1 !important; }
-            
-            .team-selects { grid-template-columns: 1fr; }
-            .btn-group { flex-direction: column; }
-            .btn-group button { width: 100%; padding: 12px; }
-            
-            .sheet-container { padding: 15px 10px; }
-            .report-header-flex { flex-direction: column; }
-            .report-header-right, .report-header-left { width: 100%; margin-bottom: 15px; }
-        }
+        /* تنسيق تقرير التقييم */
+        .report-header-flex { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 20px; margin-bottom: 25px; text-align: right; color: #000; }
+        .report-header-right { width: 50%; font-weight: bold; font-size: 15px; line-height: 1.5; }
+        .report-header-left { width: 45%; border: 2px solid #000; padding: 15px; border-radius: 6px; background: #fafafa; }
+        
+        .report-grid { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .report-grid th, .report-grid td { border: 1.5px solid #000; padding: 12px; text-align: right; font-size: 14px; font-weight: bold; color: #000; }
+        .report-grid th { background: #f2f2f2; width: 35%; }
 
-        /* إعدادات الطباعة A4 */
+        /* =========================================
+           إعدادات الطباعة A4
+           ========================================= */
         @media print {
             body { background: #fff; padding: 0; margin: 0; }
             .no-print, .modal-overlay, #activationScreen { display: none !important; }
-            .sheet-container { box-shadow: none; padding: 0; width: 100%; max-width: 100%; }
-            .table-responsive { overflow: visible !important; } /* منع إخفاء المحتوى عند الطباعة */
-            @page { size: A4 portrait; margin: 6mm 6mm 6mm 6mm; }
-            .schedule-table { min-width: 100%; }
+            .sheet-wrapper { overflow: visible; padding: 0; }
+            .sheet-container { box-shadow: none; padding: 0; width: 100%; min-width: 100%; max-width: 100%; }
+            @page { size: A4 portrait; margin: 8mm 8mm 8mm 8mm; }
             .schedule-table th, .schedule-table td {
-                border: 1.2px solid #000 !important; font-size: 9.5px !important; padding: 2px 1px !important;
+                border: 1.5px solid #000 !important; font-size: 11px !important; padding: 3px 1px !important;
             }
-            .schedule-table th, .report-grid th { background-color: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .signatures-area { margin-top: 25px; }
+            .schedule-table th, .report-grid th { background-color: #eaeaea !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .signatures-area { margin-top: 30px; }
+        }
+
+        /* تجاوب الهاتف للوحة التحكم */
+        @media (max-width: 768px) {
+            .grid-layout { grid-template-columns: 1fr; }
+            .form-group[style*="grid-column: span 2"] { grid-column: span 1 !important; }
+            .btn-group { flex-direction: column; }
+            .btn-group button { width: 100%; padding: 12px; }
         }
     </style>
 </head>
@@ -351,7 +327,7 @@
             </div>
             <div class="form-group" style="grid-column: span 2;">
                 <label>ملاحظة الساعات العادية:</label>
-                <input type="text" id="inDayShiftNote" value="ملاحظة: علواني ف تعمل الساعات العادية (08:00 إلى 12:00 و 13:00 إلى 16:30)">
+                <input type="text" id="inDayShiftNote" value="ملاحظة_ علواني ف تعمل الساعات العادية (08:00 إلى 12:00 و 13:00 إلى 16:30)">
             </div>
             <div class="form-group">
                 <label>عدد موظفي الصباح (08 إلى 14):</label>
@@ -371,7 +347,7 @@
             </div>
         </div>
 
-        <!-- إدارة الموظفين وفرق العمل (كما في السابق) -->
+        <!-- إدارة الموظفين -->
         <div class="staff-management">
             <div class="section-title">👥 إضافة وتعديل قائمة الموظفين</div>
             <div class="grid-layout">
@@ -406,7 +382,6 @@
                 </div>
             </div>
 
-            <!-- حاوية لجعل جدول الموظفين يسحب للجانب على الهاتف -->
             <div class="table-responsive">
                 <table class="staff-table">
                     <thead>
@@ -437,20 +412,25 @@
         </div>
     </div>
 
-    <!-- الوثيقة 1: جدول المداومة الرسمي -->
-    <div class="sheet-container" id="printableSchedule">
-        <div class="official-head">
-            <h3>الجمهورية الجزائرية الديمقراطية الشعبية</h3>
-            <h3>وزارة الصحة</h3>
-            <h4 id="outFacility"></h4>
-            <h4 id="outSubFacility"></h4>
-            <div class="doc-num">رقم: <span id="outDocNum"></span></div>
-            <div class="main-title" id="outMainTitle"></div>
-            <div class="center-title" id="outCenter"></div>
-        </div>
+    <!-- الوثيقة 1: جدول المداومة الرسمي المطابق للأصل -->
+    <div class="sheet-wrapper">
+        <div class="sheet-container" id="printableSchedule">
+            
+            <div class="official-head">
+                <div class="head-center-top">
+                    الجمهورية الجزائرية الديمقراطية الشعبية<br>وزارة الصحة
+                </div>
+                <div class="head-right-block">
+                    <span id="outFacility"></span><br>
+                    <span id="outSubFacility"></span><br>
+                    رقم............. /م-ع-ص-ج/ ع-ص/<span id="outDocNum"></span>
+                </div>
+                <div class="head-title-block">
+                    <div class="main-title" id="outMainTitle"></div>
+                    <div class="center-name" id="outCenter"></div>
+                </div>
+            </div>
 
-        <!-- حاوية لجعل الجدول الرسمي يسحب للجانب على الهاتف عند المعاينة -->
-        <div class="table-responsive">
             <table class="schedule-table">
                 <thead>
                     <tr>
@@ -464,40 +444,42 @@
                 </thead>
                 <tbody id="scheduleBody"></tbody>
             </table>
-        </div>
 
-        <div class="sub-notes" id="outDayShiftNote"></div>
+            <div class="sub-notes" id="outDayShiftNote"></div>
 
-        <div class="signatures-area">
-            <div><span>مدير المؤسسة العمومية للصحة الجوارية</span></div>
-            <div><span>المدير الفرعي للمصالح الصحية</span></div>
-            <div><span>رئيس المصلحة</span></div>
+            <div class="signatures-area">
+                <div>المدير الفرعي للمصالح الصحية</div>
+                <div>رئيس المصلحة</div>
+                <div>مدير المؤسسة العمومية للصحة الجوارية</div>
+            </div>
+            
+            <div class="credits">من تصميم All World Digital</div>
         </div>
-        <div class="credits">من تصميم All World Digital</div>
     </div>
 
     <!-- الوثيقة 2: تقرير التقييم الفردي للموظف -->
-    <div class="sheet-container" id="printableReport" style="display: none;">
-        <div class="official-head">
-            <h3>الجمهورية الجزائرية الديمقراطية الشعبية</h3>
-            <h3>وزارة الصحة</h3>
-            <div class="report-header-flex">
-                <div class="report-header-right">
-                    <h4 id="repFacility"></h4>
-                    <h4 id="repSubFacility"></h4>
-                    <div class="doc-num">رقم المراسلة: <span id="repDocNum"></span></div>
+    <div class="sheet-wrapper" id="printableReportWrapper" style="display: none;">
+        <div class="sheet-container" id="printableReport">
+            <div class="official-head">
+                <div class="head-center-top">الجمهورية الجزائرية الديمقراطية الشعبية<br>وزارة الصحة</div>
+                <div class="report-header-flex">
+                    <div class="report-header-right">
+                        <span id="repFacility"></span><br>
+                        <span id="repSubFacility"></span><br>
+                        رقم المراسلة: <span id="repDocNum"></span>
+                    </div>
+                    <div class="report-header-left">
+                        <div style="font-size: 14px;">إلى السيد(ة):</div>
+                        <div style="font-size: 16px; margin-bottom: 8px;">مدير المؤسسة العمومية للصحة الجوارية</div>
+                        <div style="font-size: 13px;">مرسل من طرف:</div>
+                        <div style="font-size: 15px;" id="repCenterFrom"></div>
+                    </div>
                 </div>
-                <div class="report-header-left">
-                    <div style="font-weight: bold; font-size: 14px;">إلى السيد(ة):</div>
-                    <div style="font-weight: 800; font-size: 15px; margin-bottom: 8px;">مدير المؤسسة العمومية للصحة الجوارية</div>
-                    <div style="font-weight: bold; font-size: 13px;">مرسل من طرف:</div>
-                    <div style="font-weight: 800; font-size: 14px;" id="repCenterFrom"></div>
+                <div class="head-title-block">
+                    <div class="main-title" style="margin-bottom: 20px;">تقرير تقييم الأداء والمواظبة لموظف</div>
                 </div>
             </div>
-            <div class="main-title" style="font-size: 18px; margin-bottom: 20px;">تقرير تقييم الأداء والمواظبة لموظف</div>
-        </div>
 
-        <div class="table-responsive">
             <table class="report-grid">
                 <tr><th>اسم الموظف المعني</th><td id="repEmpName"></td></tr>
                 <tr><th>فترة العمل المعتادة</th><td id="repEmpType"></td></tr>
@@ -506,14 +488,14 @@
                 <tr><th>تقييم الأداء العام للموظف</th><td id="repEmpRating"></td></tr>
                 <tr><th>ملاحظات رئيس المصلحة / الإدارة</th><td id="repEmpRemarks"></td></tr>
             </table>
-        </div>
 
-        <div class="signatures-area" style="margin-top: 60px;">
-            <div><span>إمضاء المعني (الموظف)</span></div>
-            <div><span>مدير المؤسسة العمومية</span></div>
-            <div><span>رئيس المصلحة المختصة</span></div>
+            <div class="signatures-area" style="margin-top: 60px;">
+                <div>إمضاء المعني (الموظف)</div>
+                <div>رئيس المصلحة المختصة</div>
+                <div>مدير المؤسسة العمومية</div>
+            </div>
+            <div class="credits">من تصميم All World Digital</div>
         </div>
-        <div class="credits">من تصميم All World Digital</div>
     </div>
 
     <script>
@@ -525,7 +507,7 @@
             "MOG-2026": {
                 facility: "مديرية الصحة و السكان لولاية النعامة",
                 subFacility: "المؤسسة العمومية للصحة الجوارية بالعين الصفراء",
-                center: "المركز الصحي الشهيد عنبة أبوبكر * مغرار *"
+                center: "بالمركز الصحي عنبة بوبكر * مغرار*"
             },
             "DEMO-123": {
                 facility: "مديرية الصحة لولاية (تجريبي)",
@@ -733,16 +715,16 @@
             document.getElementById("repEmpRating").innerText = emp.rating;
             document.getElementById("repEmpRemarks").innerText = emp.remarks || "لا توجد ملاحظات إضافية.";
 
-            document.getElementById("printableSchedule").style.display = "none";
-            document.getElementById("printableReport").style.display = "block";
+            document.querySelector(".sheet-wrapper").style.display = "none";
+            document.getElementById("printableReportWrapper").style.display = "block";
 
             const originalTitle = document.title;
             document.title = "تقرير_تقييم_الموظف_" + emp.name.replace(/\s+/g, '_');
             window.print();
             
             document.title = originalTitle;
-            document.getElementById("printableReport").style.display = "none";
-            document.getElementById("printableSchedule").style.display = "block";
+            document.getElementById("printableReportWrapper").style.display = "none";
+            document.querySelector(".sheet-wrapper").style.display = "block";
             renderEmployeesList();
             closeModal();
         }
@@ -759,7 +741,7 @@
         function generateSchedule() {
             document.getElementById("outFacility").innerText = document.getElementById("inFacility").value;
             document.getElementById("outSubFacility").innerText = document.getElementById("inSubFacility").value;
-            document.getElementById("outDocNum").innerText = document.getElementById("inDocNum").value;
+            document.getElementById("outDocNum").innerText = document.getElementById("inDocNum").value.split('/')[0] || "26";
             document.getElementById("outCenter").innerText = document.getElementById("inCenter").value;
             document.getElementById("outDayShiftNote").innerText = document.getElementById("inDayShiftNote").value;
 
@@ -846,8 +828,8 @@
         }
 
         function printSchedule() {
-            document.getElementById("printableSchedule").style.display = "block";
-            document.getElementById("printableReport").style.display = "none";
+            document.querySelector(".sheet-wrapper").style.display = "block";
+            document.getElementById("printableReportWrapper").style.display = "none";
             window.print();
         }
 
