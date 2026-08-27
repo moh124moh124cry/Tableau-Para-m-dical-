@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>جدول المناوبة وتقييم الموظفين | All World Digital</title>
+    <title>جدول المداومة وتقييم الموظفين | All World Digital</title>
     <style>
         :root {
             --primary: #1e3a8a;
@@ -50,33 +50,14 @@
             border-top: 5px solid var(--primary);
         }
 
-        .activation-box h2 {
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-        .activation-box p {
-            font-size: 13px;
-            color: #64748b;
-            margin-bottom: 20px;
-        }
-
+        .activation-box h2 { color: var(--primary); margin-bottom: 10px; }
+        .activation-box p { font-size: 13px; color: #64748b; margin-bottom: 20px; }
         .activation-box input {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            text-align: center;
-            border: 2px solid #cbd5e1;
-            border-radius: 8px;
-            margin-bottom: 15px;
+            width: 100%; padding: 12px; font-size: 16px; text-align: center;
+            border: 2px solid #cbd5e1; border-radius: 8px; margin-bottom: 15px;
             text-transform: uppercase;
         }
-
-        .activation-box button {
-            width: 100%;
-            padding: 12px;
-            font-size: 15px;
-        }
+        .activation-box button { width: 100%; padding: 12px; font-size: 15px; }
 
         /* لوحة التحكم الإدارية */
         .no-print {
@@ -90,127 +71,79 @@
         }
 
         .section-title {
-            font-size: 15px;
-            font-weight: bold;
-            color: var(--primary);
-            margin-bottom: 12px;
-            padding-bottom: 4px;
-            border-bottom: 2px solid #e2e8f0;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            font-size: 15px; font-weight: bold; color: var(--primary);
+            margin-bottom: 12px; padding-bottom: 4px; border-bottom: 2px solid #e2e8f0;
+            display: flex; align-items: center; gap: 6px;
         }
 
+        /* التخطيط الشبكي المتجاوب */
         .grid-layout {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
             margin-bottom: 15px;
         }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        label {
-            font-weight: 700;
-            font-size: 12px;
-            color: #334155;
-        }
-
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        label { font-weight: 700; font-size: 12px; color: #334155; }
         input, select, textarea {
-            padding: 8px 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 13px;
-            outline: none;
-            background: #fff;
+            padding: 9px 10px; border: 1px solid #cbd5e1; border-radius: 6px;
+            font-size: 13px; outline: none; background: #fff; width: 100%;
         }
-
         input:focus, select:focus, textarea:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+            border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
         }
 
         /* حقول مقفلة */
         .locked-input {
-            background-color: #e2e8f0 !important;
-            color: #475569;
-            cursor: not-allowed;
-            font-weight: bold;
+            background-color: #e2e8f0 !important; color: #475569;
+            cursor: not-allowed; font-weight: bold;
         }
 
         .team-box {
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 12px;
+            background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px;
+            border-radius: 8px; margin-bottom: 12px;
         }
-
         .team-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-            font-weight: bold;
-            font-size: 13px;
-            color: #1e3a8a;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 8px; font-weight: bold; font-size: 13px; color: #1e3a8a;
         }
-
         .team-selects {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 10px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;
         }
 
         .staff-management {
-            background: #f8fafc;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            margin-bottom: 15px;
+            background: #f8fafc; padding: 12px; border-radius: 8px;
+            border: 1px solid #e2e8f0; margin-bottom: 15px;
+        }
+
+        /* حاوية مرنة للجداول على الهواتف */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 10px;
+            padding-bottom: 5px;
         }
 
         .staff-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            background: #fff;
-            border-radius: 6px;
-            overflow: hidden;
+            width: 100%; min-width: 600px; border-collapse: collapse;
+            background: #fff; border-radius: 6px; overflow: hidden;
         }
-
         .staff-table th, .staff-table td {
-            border: 1px solid #e2e8f0;
-            padding: 6px 10px;
-            text-align: right;
-            font-size: 12px;
+            border: 1px solid #e2e8f0; padding: 8px 10px; text-align: right; font-size: 12px;
         }
-
         .staff-table th { background: #f1f5f9; font-weight: bold; }
 
         .badge-active { color: #166534; font-weight: bold; }
         .badge-vacation { color: #991b1b; font-weight: bold; }
 
         .btn-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
-
         button {
-            padding: 9px 16px;
-            border: none;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: 0.2s;
+            padding: 9px 16px; border: none; border-radius: 6px; font-weight: 700;
+            font-size: 13px; cursor: pointer; display: inline-flex; align-items: center;
+            justify-content: center; gap: 6px; transition: 0.2s;
         }
-
         .btn-generate { background: #2563eb; color: #fff; }
         .btn-generate:hover { background: #1d4ed8; }
         .btn-pdf { background: #059669; color: #fff; }
@@ -226,38 +159,24 @@
         .btn-eval { background: var(--info); color: #fff; padding: 4px 8px; font-size: 11px; }
         .btn-eval:hover { background: #0369a1; }
 
+        /* النافذة المنبثقة للتقييم */
         .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;
         }
-        
         .modal-content {
-            background: #fff;
-            width: 90%;
-            max-width: 500px;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            background: #fff; width: 95%; max-width: 500px; padding: 20px;
+            border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
-        
         .modal-header {
             font-size: 16px; font-weight: bold; margin-bottom: 15px; color: var(--primary);
             border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;
         }
 
-        /* ورقة الجدول الرسمية أو تقرير الموظف */
+        /* الورقة الرسمية */
         .sheet-container {
-            background: #ffffff;
-            width: 100%;
-            max-width: 980px;
-            margin: 0 auto;
-            padding: 25px 30px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+            background: #ffffff; width: 100%; max-width: 980px; margin: 0 auto;
+            padding: 25px 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.12);
         }
 
         .official-head { text-align: center; line-height: 1.35; margin-bottom: 8px; }
@@ -267,7 +186,10 @@
         .official-head .main-title { font-size: 16px; font-weight: 900; text-decoration: underline; margin-top: 4px; }
         .official-head .center-title { font-size: 14px; font-weight: 800; margin-top: 2px; }
 
-        .schedule-table { width: 100%; border-collapse: collapse; margin-top: 6px; table-layout: fixed; }
+        .schedule-table {
+            width: 100%; min-width: 800px; /* لضمان عدم تشوه الجدول عند السحب في الهاتف */
+            border-collapse: collapse; margin-top: 6px; table-layout: fixed;
+        }
         .schedule-table th, .schedule-table td {
             border: 1.5px solid #000; padding: 3px 2px; text-align: center;
             font-size: 11px; font-weight: bold; color: #000; vertical-align: middle; word-wrap: break-word;
@@ -286,14 +208,14 @@
 
         .report-header-flex {
             display: flex; justify-content: space-between; align-items: flex-start;
-            margin-top: 20px; margin-bottom: 25px; text-align: right;
+            margin-top: 20px; margin-bottom: 25px; text-align: right; gap: 15px;
         }
         .report-header-right { width: 50%; }
         .report-header-left {
             width: 45%; border: 1.5px solid #000; padding: 12px; border-radius: 6px; background: #fafafa;
         }
 
-        .report-grid { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .report-grid { width: 100%; min-width: 600px; border-collapse: collapse; margin-top: 15px; }
         .report-grid th, .report-grid td {
             border: 1px solid #000; padding: 12px; text-align: right; font-size: 14px; font-weight: bold;
         }
@@ -309,11 +231,33 @@
             margin-top: 25px; border-top: 1px dashed #777; padding-top: 4px;
         }
 
+        /* ========================================================
+           تعديلات التجاوب (Responsive) لشاشات الهواتف المحمولة
+           ======================================================== */
+        @media (max-width: 768px) {
+            body { padding: 5px; }
+            .no-print { padding: 15px; }
+            .grid-layout { grid-template-columns: 1fr; gap: 10px; }
+            /* جعل الحقول التي تأخذ مساحة مزدوجة تأخذ مساحة مفردة على الهاتف */
+            .form-group[style*="grid-column: span 2"] { grid-column: span 1 !important; }
+            
+            .team-selects { grid-template-columns: 1fr; }
+            .btn-group { flex-direction: column; }
+            .btn-group button { width: 100%; padding: 12px; }
+            
+            .sheet-container { padding: 15px 10px; }
+            .report-header-flex { flex-direction: column; }
+            .report-header-right, .report-header-left { width: 100%; margin-bottom: 15px; }
+        }
+
+        /* إعدادات الطباعة A4 */
         @media print {
             body { background: #fff; padding: 0; margin: 0; }
             .no-print, .modal-overlay, #activationScreen { display: none !important; }
             .sheet-container { box-shadow: none; padding: 0; width: 100%; max-width: 100%; }
+            .table-responsive { overflow: visible !important; } /* منع إخفاء المحتوى عند الطباعة */
             @page { size: A4 portrait; margin: 6mm 6mm 6mm 6mm; }
+            .schedule-table { min-width: 100%; }
             .schedule-table th, .schedule-table td {
                 border: 1.2px solid #000 !important; font-size: 9.5px !important; padding: 2px 1px !important;
             }
@@ -462,19 +406,22 @@
                 </div>
             </div>
 
-            <table class="staff-table">
-                <thead>
-                    <tr>
-                        <th>الاسم</th>
-                        <th>الفترة</th>
-                        <th>الحالة</th>
-                        <th>الغياب/التأخر</th>
-                        <th>الأداء</th>
-                        <th style="text-align:center;">إجراءات</th>
-                    </tr>
-                </thead>
-                <tbody id="staffTableList"></tbody>
-            </table>
+            <!-- حاوية لجعل جدول الموظفين يسحب للجانب على الهاتف -->
+            <div class="table-responsive">
+                <table class="staff-table">
+                    <thead>
+                        <tr>
+                            <th>الاسم</th>
+                            <th>الفترة</th>
+                            <th>الحالة</th>
+                            <th>الغياب/التأخر</th>
+                            <th>الأداء</th>
+                            <th style="text-align:center;">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="staffTableList"></tbody>
+                </table>
+            </div>
         </div>
 
         <div class="staff-management">
@@ -502,19 +449,22 @@
             <div class="center-title" id="outCenter"></div>
         </div>
 
-        <table class="schedule-table">
-            <thead>
-                <tr>
-                    <th class="col-day">اليوم</th>
-                    <th class="col-date">التاريخ</th>
-                    <th class="col-shift1">08 سا الى 14 سا</th>
-                    <th class="col-shift2">14 سا الى 20 سا</th>
-                    <th class="col-shift3">20 سا الى 08 سا</th>
-                    <th class="col-notes">ملاحظة</th>
-                </tr>
-            </thead>
-            <tbody id="scheduleBody"></tbody>
-        </table>
+        <!-- حاوية لجعل الجدول الرسمي يسحب للجانب على الهاتف عند المعاينة -->
+        <div class="table-responsive">
+            <table class="schedule-table">
+                <thead>
+                    <tr>
+                        <th class="col-day">اليوم</th>
+                        <th class="col-date">التاريخ</th>
+                        <th class="col-shift1">08 سا الى 14 سا</th>
+                        <th class="col-shift2">14 سا الى 20 سا</th>
+                        <th class="col-shift3">20 سا الى 08 سا</th>
+                        <th class="col-notes">ملاحظة</th>
+                    </tr>
+                </thead>
+                <tbody id="scheduleBody"></tbody>
+            </table>
+        </div>
 
         <div class="sub-notes" id="outDayShiftNote"></div>
 
@@ -547,14 +497,16 @@
             <div class="main-title" style="font-size: 18px; margin-bottom: 20px;">تقرير تقييم الأداء والمواظبة لموظف</div>
         </div>
 
-        <table class="report-grid">
-            <tr><th>اسم الموظف المعني</th><td id="repEmpName"></td></tr>
-            <tr><th>فترة العمل المعتادة</th><td id="repEmpType"></td></tr>
-            <tr><th>عدد أيام الغياب المبررة والغير مبررة</th><td id="repEmpAbsence"></td></tr>
-            <tr><th>إجمالي ساعات التأخر عن المناوبة</th><td id="repEmpDelay"></td></tr>
-            <tr><th>تقييم الأداء العام للموظف</th><td id="repEmpRating"></td></tr>
-            <tr><th>ملاحظات رئيس المصلحة / الإدارة</th><td id="repEmpRemarks"></td></tr>
-        </table>
+        <div class="table-responsive">
+            <table class="report-grid">
+                <tr><th>اسم الموظف المعني</th><td id="repEmpName"></td></tr>
+                <tr><th>فترة العمل المعتادة</th><td id="repEmpType"></td></tr>
+                <tr><th>عدد أيام الغياب المبررة والغير مبررة</th><td id="repEmpAbsence"></td></tr>
+                <tr><th>إجمالي ساعات التأخر عن المناوبة</th><td id="repEmpDelay"></td></tr>
+                <tr><th>تقييم الأداء العام للموظف</th><td id="repEmpRating"></td></tr>
+                <tr><th>ملاحظات رئيس المصلحة / الإدارة</th><td id="repEmpRemarks"></td></tr>
+            </table>
+        </div>
 
         <div class="signatures-area" style="margin-top: 60px;">
             <div><span>إمضاء المعني (الموظف)</span></div>
@@ -569,13 +521,11 @@
         // 🔒 نظام إدارة التراخيص وحماية النسخة 🔒
         // ==========================================
         
-        // أضف هنا أكواد التفعيل لزبائنك مع أسماء مؤسساتهم
-        // عندما يشتري منك شخص، أنشئ له كود هنا وارفع التحديث لـ Vercel أو Github
         const AUTHORIZED_LICENSES = {
             "MOG-2026": {
                 facility: "مديرية الصحة و السكان لولاية النعامة",
                 subFacility: "المؤسسة العمومية للصحة الجوارية بالعين الصفراء",
-                center: "المركز الصحي الشهيد عنبة أبوبكر * مغرار *"
+                center: "المركز الصحي عنبة بوبكر * مغرار *"
             },
             "DEMO-123": {
                 facility: "مديرية الصحة لولاية (تجريبي)",
@@ -584,22 +534,18 @@
             }
         };
 
-        // التحقق من وجود ترخيص مفعل في الجهاز
         function checkLocalLicense() {
             const savedCode = localStorage.getItem("app_license_key");
             if (savedCode && AUTHORIZED_LICENSES[savedCode]) {
-                // الكود صحيح ومحفوظ، قم بفتح التطبيق وتثبيت أسماء المؤسسة
                 applyLicenseData(AUTHORIZED_LICENSES[savedCode]);
                 document.getElementById("activationScreen").style.display = "none";
                 return true;
             } else {
-                // لا يوجد كود أو الكود خطأ، اعرض شاشة التفعيل
                 document.getElementById("activationScreen").style.display = "flex";
                 return false;
             }
         }
 
-        // تفعيل الكود الذي أدخله المستخدم
         function checkActivation() {
             const inputCode = document.getElementById("activationCodeInput").value.trim().toUpperCase();
             if (AUTHORIZED_LICENSES[inputCode]) {
@@ -607,19 +553,17 @@
                 applyLicenseData(AUTHORIZED_LICENSES[inputCode]);
                 document.getElementById("activationScreen").style.display = "none";
                 document.getElementById("activationError").style.display = "none";
-                generateSchedule(); // تحديث الجدول بالأسماء الجديدة
+                generateSchedule();
             } else {
                 document.getElementById("activationError").style.display = "block";
             }
         }
 
-        // تطبيق بيانات الترخيص (إغلاق الحقول وإجبارها على استخدام اسم مؤسسة المشتري)
         function applyLicenseData(licenseData) {
             document.getElementById("inFacility").value = licenseData.facility;
             document.getElementById("inSubFacility").value = licenseData.subFacility;
             document.getElementById("inCenter").value = licenseData.center;
         }
-
 
         // ==========================================
         // بقية نظام العمل (الموظفون والجدول)
@@ -711,7 +655,7 @@
                     <div class="team-selects">
                         <div class="form-group"><label>الموظف 1 (إجباري):</label><select onchange="updateTeamMember(${tIdx}, 'm1', this.value)">${getOptionsHTML(team.m1)}</select></div>
                         <div class="form-group"><label>الموظف 2 (إجباري):</label><select onchange="updateTeamMember(${tIdx}, 'm2', this.value)">${getOptionsHTML(team.m2)}</select></div>
-                        <div class="form-group"><label>الموظف 3 (اختياري للدمج):</label><select onchange="updateTeamMember(${tIdx}, 'm3', this.value)">${getOptionsHTML(team.m3)}</select></div>
+                        <div class="form-group"><label>الموظف 3 (اختياري):</label><select onchange="updateTeamMember(${tIdx}, 'm3', this.value)">${getOptionsHTML(team.m3)}</select></div>
                     </div>
                 `;
                 container.appendChild(box);
@@ -813,7 +757,6 @@
         }
 
         function generateSchedule() {
-            // ملاحظة: الحقول الإدارية الآن مغلقة وتأخذ قيمتها من الترخيص مباشرة
             document.getElementById("outFacility").innerText = document.getElementById("inFacility").value;
             document.getElementById("outSubFacility").innerText = document.getElementById("inSubFacility").value;
             document.getElementById("outDocNum").innerText = document.getElementById("inDocNum").value;
