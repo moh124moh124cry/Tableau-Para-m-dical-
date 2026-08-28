@@ -93,7 +93,6 @@
             font-size: 13px; outline: none; background: #fff; width: 100%;
         }
 
-        /* تخصيص زر رفع الملف */
         input[type="file"] {
             padding: 6px;
             background: #f8fafc;
@@ -143,6 +142,7 @@
         .btn-secondary { background: #475569; color: #fff; }
         .btn-delete { background: #ef4444; color: #fff; padding: 4px 8px; font-size: 11px; }
         .btn-eval { background: var(--info); color: #fff; padding: 4px 8px; font-size: 11px; }
+        .btn-reset { background: #f59e0b; color: #fff; }
 
         /* شاشة التفعيل */
         #activationScreen {
@@ -173,9 +173,8 @@
             margin: 0 auto; padding: 30px 40px; box-shadow: 0 4px 10px rgba(0,0,0,0.12); color: #000 !important;
         }
 
-        /* تنسيق الترويسة ليحتوي اللوغو بتموضع مطلق في أقصى اليسار */
         .official-head {
-            position: relative; /* ضروري لعمل اللوغو */
+            position: relative;
             line-height: 1.4; 
             margin-bottom: 15px; 
             color: #000; 
@@ -346,15 +345,15 @@
         <div class="grid-layout">
             <div class="form-group">
                 <label>الشهر والسنة:</label>
-                <input type="month" id="selectedMonth" value="2026-08">
+                <input type="month" id="selectedMonth" value="2026-08" onchange="generateSchedule()">
             </div>
             <div class="form-group">
                 <label>رقم المراسلة:</label>
-                <input type="text" id="inDocNum" value="............ /م-ع-ص-ج/ ع-ص/26">
+                <input type="text" id="inDocNum" value="............ /م-ع-ص-ج/ ع-ص/26" onchange="generateSchedule()">
             </div>
             <div class="form-group" style="grid-column: span 2;">
                 <label>ملاحظة الساعات العادية أو الاستخلاف:</label>
-                <input type="text" id="inDayShiftNote" value="ملاحظة: علواني ف تعمل الساعات العادية (08:00 إلى 12:00 و 13:00 إلى 16:30)">
+                <input type="text" id="inDayShiftNote" value="ملاحظة: علواني ف تعمل الساعات العادية (08:00 إلى 12:00 و 13:00 إلى 16:30)" onchange="generateSchedule()">
             </div>
             <div class="form-group">
                 <label>عدد موظفي الصباح (الخانة 1):</label>
@@ -433,9 +432,10 @@
         </div>
 
         <div class="btn-group">
-            <button class="btn-generate" onclick="generateSchedule()">⚡ تحديث جدول المصلحة</button>
+            <button class="btn-generate" onclick="generateSchedule()">⚡ تحديث وحفظ الجدول</button>
             <button class="btn-pdf" onclick="exportToPdf()">📄 تصدير PDF</button>
             <button class="btn-print" onclick="printSchedule()">🖨️ طباعة جدول المصلحة</button>
+            <button class="btn-reset" onclick="resetData()">⚠️ إعادة ضبط البيانات</button>
         </div>
     </div>
 
@@ -444,7 +444,6 @@
         <div class="sheet-container" id="printableSchedule">
             
             <div class="official-head">
-                <!-- اللوغو متموضع في أقصى اليسار في الأعلى -->
                 <img id="outLogo" class="head-logo" src="" alt="شعار المؤسسة" style="display: none;">
                 
                 <div class="head-center-top">
@@ -493,7 +492,6 @@
     <div class="sheet-wrapper" id="printableReportWrapper" style="display: none;">
         <div class="sheet-container" id="printableReport">
             <div class="official-head">
-                <!-- اللوغو متموضع في أقصى اليسار في الأعلى -->
                 <img id="repLogo" class="head-logo" src="" alt="شعار المؤسسة" style="display: none;">
                 
                 <div class="head-center-top">الجمهورية الجزائرية الديمقراطية الشعبية<br>وزارة الصحة</div>
@@ -537,7 +535,7 @@
 
     <script>
         // ==========================================
-        // وظيفة رفع الشعار (Logo) بشكل محلي بدون انترنت
+        // وظيفة حفظ واسترجاع الشعار (Logo) في المتصفح
         // ==========================================
         function handleLogoUpload(event) {
             const file = event.target.files[0];
@@ -545,17 +543,21 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const logoDataUrl = e.target.result;
-                    
-                    const outLogo = document.getElementById('outLogo');
-                    outLogo.src = logoDataUrl;
-                    outLogo.style.display = 'block';
-
-                    const repLogo = document.getElementById('repLogo');
-                    repLogo.src = logoDataUrl;
-                    repLogo.style.display = 'block';
+                    applyLogo(logoDataUrl);
+                    localStorage.setItem('app_saved_logo', logoDataUrl); // حفظ الشعار
                 };
                 reader.readAsDataURL(file);
             }
+        }
+
+        function applyLogo(logoDataUrl) {
+            const outLogo = document.getElementById('outLogo');
+            outLogo.src = logoDataUrl;
+            outLogo.style.display = 'block';
+
+            const repLogo = document.getElementById('repLogo');
+            repLogo.src = logoDataUrl;
+            repLogo.style.display = 'block';
         }
 
         // ==========================================
@@ -593,7 +595,7 @@
                 applyLicenseData(AUTHORIZED_LICENSES[inputCode]);
                 document.getElementById("activationScreen").style.display = "none";
                 document.getElementById("activationError").style.display = "none";
-                generateSchedule();
+                loadSavedData();
             } else {
                 document.getElementById("activationError").style.display = "block";
             }
@@ -606,7 +608,7 @@
         }
 
         // ==========================================
-        // قاعدة بيانات المصالح المستقلة
+        // قاعدة البيانات الافتراضية
         // ==========================================
         const defaultRemarks = {
             "ممتاز": "أداء متميز وانضباط عالي في العمل والمناوبات. يوصى بالتشجيع.",
@@ -616,11 +618,9 @@
             "ضعيف": "أداء ضعيف، لوحظ غياب وتأخر متكرر. يرجى تدارك النقائص والالتزام بالقوانين."
         };
 
-        const departmentsData = {
+        const defaultDepartmentsData = {
             paramedical: {
-                title: "جدول المداومة الشبه الطبية",
-                label: "المداومة الشبه طبية",
-                shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
+                title: "جدول المداومة الشبه الطبية", label: "المداومة الشبه طبية", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
                     { name: "حمان ف", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "عيساوي ر", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
@@ -633,121 +633,145 @@
                     { name: "سحنون ع غ", type: "night", isVacation: true, vStart: "2026-08-20", vEnd: "2026-09-11", absence: 0, delay: 0, rating: "ممتاز", remarks: "عطلة سنوية" },
                     { name: "سايح ن", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
-                teams: [
-                    { name: "الفرقة الأولى (أ)", m1: "حمان ف", m2: "عيساوي ر", m3: "خليفي ع" },
-                    { name: "الفرقة الثانية (ب)", m1: "بن عاشور ر", m2: "ثليجي ن", m3: "" },
-                    { name: "الفرقة الثالثة (ج)", m1: "لزرق س", m2: "خليفي ع", m3: "" }
-                ]
+                teams: [{ name: "الفرقة الأولى (أ)", m1: "حمان ف", m2: "عيساوي ر", m3: "خليفي ع" }, { name: "الفرقة الثانية (ب)", m1: "بن عاشور ر", m2: "ثليجي ن", m3: "" }, { name: "الفرقة الثالثة (ج)", m1: "لزرق س", m2: "خليفي ع", m3: "" }]
             },
             doctors: {
-                title: "جدول مداومة الأطباء العامين",
-                label: "مداومة الأطباء",
-                shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
+                title: "جدول مداومة الأطباء العامين", label: "مداومة الأطباء", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
                     { name: "د. بلقاسم م", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "د. قدور ع", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "د. طيبي س", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "د. منصوري ف", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
-                teams: [
-                    { name: "فرقة الأطباء 1", m1: "د. بلقاسم م", m2: "د. قدور ع", m3: "" }
-                ]
+                teams: [{ name: "فرقة الأطباء 1", m1: "د. بلقاسم م", m2: "د. قدور ع", m3: "" }]
             },
             patrols: {
-                title: "جدول الدوريات والخرجات الطبية",
-                label: "الدوريات الطبية",
-                shifts: { s1: "دورية الصباح (08-12)", s2: "دورية المساء (13-16)", s3: "فريق الإسناد والتدخل" },
+                title: "جدول الدوريات والخرجات الطبية", label: "الدوريات الطبية", shifts: { s1: "دورية الصباح (08-12)", s2: "دورية المساء (13-16)", s3: "فريق الإسناد والتدخل" },
                 employees: [
                     { name: "د. رحماني ك", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "عثماني أ", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "بوزيد س", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
-                teams: [
-                    { name: "طاقم الدورية الريفية", m1: "د. رحماني ك", m2: "عثماني أ", m3: "بوزيد س" }
-                ]
+                teams: [{ name: "طاقم الدورية الريفية", m1: "د. رحماني ك", m2: "عثماني أ", m3: "بوزيد س" }]
             },
             lab: {
-                title: "جدول مداومة مصلحة المخبر والتحاليل",
-                label: "مصلحة المخبر",
-                shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
+                title: "جدول مداومة مصلحة المخبر والتحاليل", label: "مصلحة المخبر", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
                     { name: "العربي ط", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "زيان م", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
-                teams: [
-                    { name: "طاقم المخبر أ", m1: "العربي ط", m2: "", m3: "" }
-                ]
+                teams: [{ name: "طاقم المخبر أ", m1: "العربي ط", m2: "", m3: "" }]
             },
             radio: {
-                title: "جدول مداومة مصلحة الأشعة",
-                label: "مصلحة الأشعة",
-                shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
+                title: "جدول مداومة مصلحة الأشعة", label: "مصلحة الأشعة", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
                     { name: "مرابط ح", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "علالي ي", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
-                teams: [
-                    { name: "فريق الأشعة", m1: "مرابط ح", m2: "", m3: "" }
-                ]
+                teams: [{ name: "فريق الأشعة", m1: "مرابط ح", m2: "", m3: "" }]
             },
             dental: {
-                title: "جدول مداومة مصلحة جراحة الأسنان",
-                label: "جراحة الأسنان",
-                shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "المداومة والاستعجالات" },
+                title: "جدول مداومة مصلحة جراحة الأسنان", label: "جراحة الأسنان", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "المداومة والاستعجالات" },
                 employees: [
                     { name: "د. بوزيان", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "ناصري خ", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
-                teams: [
-                    { name: "عيادة الأسنان", m1: "د. بوزيان", m2: "ناصري خ", m3: "" }
-                ]
+                teams: [{ name: "عيادة الأسنان", m1: "د. بوزيان", m2: "ناصري خ", m3: "" }]
             },
             receipts: {
-                title: "جدول مداومة مكتب الإيرادات والتحصيل",
-                label: "مكتب الإيرادات",
-                shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
+                title: "جدول مداومة مكتب الإيرادات والتحصيل", label: "مكتب الإيرادات", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
                     { name: "فلاحي ع", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "سماتي ر", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
-                teams: [
-                    { name: "مكتب الإيرادات", m1: "فلاحي ع", m2: "", m3: "" }
-                ]
+                teams: [{ name: "مكتب الإيرادات", m1: "فلاحي ع", m2: "", m3: "" }]
             },
             ambulance: {
-                title: "جدول مداومة سائقي سيارة الإسعاف",
-                label: "سائقي الإسعاف",
-                shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
+                title: "جدول مداومة سائقي سيارة الإسعاف", label: "سائقي الإسعاف", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
                     { name: "بوعمامة ع", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "لخضر م", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
-                teams: [
-                    { name: "فريق الإسعاف 1", m1: "بوعمامة ع", m2: "", m3: "" }
-                ]
+                teams: [{ name: "فريق الإسعاف 1", m1: "بوعمامة ع", m2: "", m3: "" }]
             },
             security: {
-                title: "جدول مداومة الحراسة والأمن",
-                label: "الحراسة والأمن",
-                shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
+                title: "جدول مداومة الحراسة والأمن", label: "الحراسة والأمن", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
                     { name: "بن علي ك", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "تواتي س", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
-                teams: [
-                    { name: "فريق الحراسة 1", m1: "بن علي ك", m2: "", m3: "" }
-                ]
+                teams: [{ name: "فريق الحراسة 1", m1: "بن علي ك", m2: "", m3: "" }]
             }
         };
 
+        // ==========================================
+        // نظام الحفظ التلقائي LocalStorage
+        // ==========================================
+        let departmentsData = {};
         let currentDept = "paramedical";
         let currentEditIndex = -1;
 
+        function saveToLocalStorage() {
+            localStorage.setItem('app_departments_data', JSON.stringify(departmentsData));
+            
+            // حفظ الإعدادات العامة أيضاً
+            const settings = {
+                month: document.getElementById("selectedMonth").value,
+                docNum: document.getElementById("inDocNum").value,
+                shiftNote: document.getElementById("inDayShiftNote").value,
+                mCount: document.getElementById("morningStaffCount").value,
+                eCount: document.getElementById("eveningStaffCount").value
+            };
+            localStorage.setItem('app_general_settings', JSON.stringify(settings));
+        }
+
+        function loadSavedData() {
+            // جلب البيانات أو استخدام الافتراضية
+            const savedData = localStorage.getItem('app_departments_data');
+            if (savedData) {
+                departmentsData = JSON.parse(savedData);
+            } else {
+                departmentsData = JSON.parse(JSON.stringify(defaultDepartmentsData)); // نسخ عميق
+            }
+
+            // جلب الإعدادات العامة
+            const savedSettings = localStorage.getItem('app_general_settings');
+            if (savedSettings) {
+                const s = JSON.parse(savedSettings);
+                document.getElementById("selectedMonth").value = s.month || "2026-08";
+                document.getElementById("inDocNum").value = s.docNum || "............ /م-ع-ص-ج/ ع-ص/26";
+                document.getElementById("inDayShiftNote").value = s.shiftNote || "ملاحظة: علواني ف تعمل الساعات العادية";
+                document.getElementById("morningStaffCount").value = s.mCount || "3";
+                document.getElementById("eveningStaffCount").value = s.eCount || "2";
+            }
+
+            // جلب الشعار المحفوظ
+            const savedLogo = localStorage.getItem('app_saved_logo');
+            if (savedLogo) {
+                applyLogo(savedLogo);
+            }
+
+            switchDepartment(currentDept); // تهيئة العرض
+        }
+
+        function resetData() {
+            if(confirm("هل أنت متأكد أنك تريد مسح جميع الموظفين والفرق وإعادة البيانات الافتراضية؟")) {
+                localStorage.removeItem('app_departments_data');
+                localStorage.removeItem('app_saved_logo');
+                document.getElementById('outLogo').style.display = 'none';
+                document.getElementById('repLogo').style.display = 'none';
+                loadSavedData();
+            }
+        }
+
+
+        // التبديل بين المصالح
         function switchDepartment(deptKey) {
             currentDept = deptKey;
             
             document.querySelectorAll(".dept-btn").forEach(btn => btn.classList.remove("active"));
-            event.target.classList.add("active");
+            const targetBtn = document.querySelector(`.dept-btn[onclick="switchDepartment('${deptKey}')"]`);
+            if(targetBtn) targetBtn.classList.add("active");
 
             const dept = departmentsData[currentDept];
             document.getElementById("currentDeptTitleBadge").innerText = dept.title;
@@ -823,9 +847,28 @@
             });
         }
 
-        function updateTeamMember(teamIdx, memberKey, val) { departmentsData[currentDept].teams[teamIdx][memberKey] = val; generateSchedule(); }
-        function addNewTeam() { departmentsData[currentDept].teams.push({ name: `فرقة عمل رقم (${departmentsData[currentDept].teams.length + 1})`, m1: "", m2: "", m3: "" }); renderTeamsConfig(); generateSchedule(); }
-        function deleteTeam(index) { departmentsData[currentDept].teams.splice(index, 1); renderTeamsConfig(); generateSchedule(); }
+        function updateTeamMember(teamIdx, memberKey, val) { 
+            departmentsData[currentDept].teams[teamIdx][memberKey] = val; 
+            saveToLocalStorage();
+            generateSchedule(); 
+        }
+        
+        function addNewTeam() { 
+            departmentsData[currentDept].teams.push({ 
+                name: `فرقة عمل رقم (${departmentsData[currentDept].teams.length + 1})`, 
+                m1: "", m2: "", m3: "" 
+            }); 
+            saveToLocalStorage();
+            renderTeamsConfig(); 
+            generateSchedule(); 
+        }
+        
+        function deleteTeam(index) { 
+            departmentsData[currentDept].teams.splice(index, 1); 
+            saveToLocalStorage();
+            renderTeamsConfig(); 
+            generateSchedule(); 
+        }
 
         function addNewEmployee() {
             const name = document.getElementById("staffNameInput").value.trim();
@@ -835,14 +878,24 @@
             const vEnd = document.getElementById("staffVEnd").value;
 
             if (!name) return alert("يرجى إدخال اسم الموظف / العون");
-            departmentsData[currentDept].employees.push({ name, type, isVacation: isVac, vStart: isVac ? vStart : "", vEnd: isVac ? vEnd : "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] });
+            departmentsData[currentDept].employees.push({ 
+                name, type, isVacation: isVac, vStart: isVac ? vStart : "", vEnd: isVac ? vEnd : "", 
+                absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] 
+            });
             document.getElementById("staffNameInput").value = "";
+            saveToLocalStorage();
             renderEmployeesList();
             generateSchedule();
         }
 
-        function deleteEmployee(index) { departmentsData[currentDept].employees.splice(index, 1); renderEmployeesList(); generateSchedule(); }
+        function deleteEmployee(index) { 
+            departmentsData[currentDept].employees.splice(index, 1); 
+            saveToLocalStorage();
+            renderEmployeesList(); 
+            generateSchedule(); 
+        }
 
+        // نافذة التقييم
         function openModal(index) {
             currentEditIndex = index;
             const emp = departmentsData[currentDept].employees[index];
@@ -868,6 +921,7 @@
                 emp.delay = document.getElementById("evalDelay").value;
                 emp.rating = document.getElementById("evalRating").value;
                 emp.remarks = document.getElementById("evalRemarks").value;
+                saveToLocalStorage();
                 renderEmployeesList();
                 closeModal();
             }
@@ -914,6 +968,7 @@
             return curDate >= startDate && curDate <= endDate;
         }
 
+        // توليد الجدول الخاص بالمصلحة الحالية
         function generateSchedule() {
             document.getElementById("outFacility").innerText = document.getElementById("inFacility").value;
             document.getElementById("outSubFacility").innerText = document.getElementById("inSubFacility").value;
@@ -930,6 +985,10 @@
 
             const mCountLimit = parseInt(document.getElementById("morningStaffCount").value);
             const eCountLimit = parseInt(document.getElementById("eveningStaffCount").value);
+            
+            // حفظ الإعدادات في المتصفح في كل مرة يتم توليد الجدول
+            saveToLocalStorage();
+
             const totalDays = new Date(year, month, 0).getDate();
             const tbody = document.getElementById("scheduleBody");
             tbody.innerHTML = "";
@@ -1023,8 +1082,7 @@
 
         window.onload = function() {
             if (checkLocalLicense()) {
-                renderEmployeesList();
-                generateSchedule();
+                loadSavedData(); // استدعاء البيانات المحفوظة بدلاً من الافتراضية
             }
         };
     </script>
