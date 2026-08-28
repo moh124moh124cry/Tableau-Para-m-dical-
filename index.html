@@ -143,6 +143,7 @@
         .btn-delete { background: #ef4444; color: #fff; padding: 4px 8px; font-size: 11px; }
         .btn-eval { background: var(--info); color: #fff; padding: 4px 8px; font-size: 11px; }
         .btn-reset { background: #f59e0b; color: #fff; }
+        .btn-report { background: #d97706; color: #fff; padding: 6px 12px; font-size: 12px; }
 
         /* شاشة التفعيل */
         #activationScreen {
@@ -163,7 +164,7 @@
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;
         }
-        .modal-content { background: #fff; width: 95%; max-width: 500px; padding: 20px; border-radius: 12px; }
+        .modal-content { background: #fff; width: 95%; max-width: 550px; padding: 20px; border-radius: 12px; }
         .modal-header { font-size: 16px; font-weight: bold; margin-bottom: 15px; color: var(--primary); border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
 
         /* الورقة الرسمية الثابتة */
@@ -223,23 +224,24 @@
             margin-top: 25px; border-top: 1px dashed #777; padding-top: 4px; color: #333;
         }
 
-        /* تقرير التقييم */
+        /* تقرير التقييم والغياب */
         .report-header-flex { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 20px; margin-bottom: 25px; text-align: right; color: #000; }
-        .report-header-right { width: 50%; font-weight: bold; font-size: 15px; line-height: 1.5; }
-        .report-header-left { width: 45%; border: 2px solid #000; padding: 15px; border-radius: 6px; background: #fafafa; }
+        .report-header-right { width: 50%; font-weight: bold; font-size: 16px; line-height: 1.6; }
+        .report-header-left { width: 45%; font-weight: bold; font-size: 16px; line-height: 1.6; text-align: center; }
         .report-grid { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .report-grid th, .report-grid td { border: 1px solid #000; padding: 12px; text-align: right; font-size: 14px; font-weight: bold; color: #000; }
-        .report-grid th { background: #f2f2f2; width: 35%; }
+        .report-grid th, .report-grid td { border: 1px solid #000; padding: 12px; text-align: center; font-size: 14px; font-weight: bold; color: #000; }
+        .report-grid th { background: #f2f2f2; }
+        .report-body-text { font-size: 18px; line-height: 2; text-align: justify; outline: none; margin-top: 20px; padding: 10px; }
 
         @media print {
             body { background: #fff; padding: 0; margin: 0; }
             .no-print, .modal-overlay, #activationScreen, .departments-bar { display: none !important; }
             .sheet-wrapper { overflow: visible; padding: 0; }
-            .sheet-container { box-shadow: none; padding: 0; width: 100%; min-width: 100%; max-width: 100%; }
-            @page { size: A4 portrait; margin: 8mm 8mm 8mm 8mm; }
+            .sheet-container { box-shadow: none; padding: 0; width: 100%; min-width: 100%; max-width: 100%; margin: 0; }
+            @page { size: A4 portrait; margin: 10mm; }
             .schedule-table th, .schedule-table td { border: 1.5px solid #000 !important; font-size: 11px !important; padding: 3px 1px !important; }
             .schedule-table th, .report-grid th { background-color: #eaeaea !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .signatures-area { margin-top: 30px; }
+            .signatures-area { margin-top: 40px; }
         }
 
         @media (max-width: 768px) {
@@ -258,7 +260,7 @@
             <h2>🔒 تفعيل المنظومة</h2>
             <p>يرجى إدخال كود التفعيل الخاص بمؤسستك للولوج إلى كافة المصالح</p>
             <input type="text" id="activationCodeInput" placeholder="أدخل الكود هنا (مثال: MOG-2026)">
-            <button class="btn-generate" onclick="checkActivation()">تفعيل النظام</button>
+            <button class="btn-generate" onclick="checkActivation()" style="width: 100%; padding: 12px; font-size: 16px;">تفعيل النظام</button>
             <p id="activationError" style="color: red; display: none; margin-top: 10px; font-weight: bold;">❌ الكود غير صحيح، يرجى التأكد</p>
             <div style="margin-top: 25px; font-size: 11px; color: #94a3b8;">
                 تصميم وتطوير: <strong>All World Digital</strong>
@@ -279,22 +281,22 @@
         <button class="dept-btn" onclick="switchDepartment('security')">🛡️ الحراسة والأمن</button>
     </div>
 
-    <!-- نافذة تقييم الأداء والمواظبة -->
+    <!-- نافذة تتبع الحضور والتقييم (المحدثة) -->
     <div class="modal-overlay" id="evalModal">
         <div class="modal-content">
-            <div class="modal-header">📝 تقييم الأداء للموظف: <span id="evalEmpName" style="color:#d97706;"></span></div>
+            <div class="modal-header">📋 تتبع الحضور والتقييم للموظف: <span id="evalEmpName" style="color:#d97706;"></span></div>
             <div class="grid-layout">
                 <div class="form-group">
-                    <label>عدد أيام الغياب:</label>
+                    <label>أيام الغياب غير المبررة:</label>
                     <input type="number" id="evalAbsence" min="0" value="0">
                 </div>
                 <div class="form-group">
-                    <label>عدد ساعات التأخر:</label>
+                    <label>ساعات التأخر اليومي (تراكمي):</label>
                     <input type="number" id="evalDelay" min="0" value="0">
                 </div>
             </div>
             <div class="form-group" style="margin-top:10px;">
-                <label>تقييم الأداء العام:</label>
+                <label>درجة التقييم العام:</label>
                 <select id="evalRating" onchange="updateAutoRemarks()">
                     <option value="ممتاز">ممتاز</option>
                     <option value="جيد جداً">جيد جداً</option>
@@ -304,13 +306,14 @@
                 </select>
             </div>
             <div class="form-group" style="margin-top:10px;">
-                <label>ملاحظات إدارية ومبررات:</label>
+                <label>الملاحظات الآلية (يمكن التعديل عليها):</label>
                 <textarea id="evalRemarks" rows="3"></textarea>
             </div>
             <div class="btn-group" style="justify-content: flex-end; margin-top: 20px;">
-                <button class="btn-print" onclick="printIndividualReport()">🖨️ طباعة التقرير</button>
-                <button class="btn-add" onclick="saveEvaluationAndClose()">💾 حفظ التقييم</button>
-                <button class="btn-secondary" onclick="closeModal()">❌ إلغاء</button>
+                <button class="btn-report" onclick="printAbsenceReport()">📄 تقرير غياب وتأخر</button>
+                <button class="btn-eval" style="padding: 6px 12px; font-size: 12px;" onclick="printEvalReport()">📊 تقرير التقييم</button>
+                <button class="btn-add" onclick="saveEvaluationAndClose()">💾 حفظ التغييرات</button>
+                <button class="btn-secondary" onclick="closeModal()">❌ إغلاق</button>
             </div>
         </div>
     </div>
@@ -335,10 +338,13 @@
                 <label style="color: #b91c1c;">المركز الصحي / المصلحة (مقفلة بالترخيص):</label>
                 <input type="text" id="inCenter" class="locked-input" readonly>
             </div>
-            <!-- زر رفع اللوغو -->
-            <div class="form-group" style="grid-column: span 2;">
-                <label style="color: #15803d;">إضافة شعار المؤسسة (يظهر في أعلى أقصى اليسار):</label>
+            <div class="form-group" style="grid-column: span 1;">
+                <label style="color: #15803d;">إضافة شعار المؤسسة:</label>
                 <input type="file" id="logoInput" accept="image/*" onchange="handleLogoUpload(event)">
+            </div>
+            <div class="form-group" style="grid-column: span 1;">
+                <label>تاريخ تحرير التقارير:</label>
+                <input type="date" id="reportDate">
             </div>
         </div>
 
@@ -382,9 +388,10 @@
                     <input type="text" id="staffNameInput" placeholder="مثال: حمان ع">
                 </div>
                 <div class="form-group">
-                    <label>نوع التعيين:</label>
+                    <label>الفترة (التعيين):</label>
                     <select id="staffDutyType">
-                        <option value="day">فترة نهارية (صباح / مساء)</option>
+                        <option value="morning">الفترة الصباحية</option>
+                        <option value="evening">الفترة المسائية</option>
                         <option value="night">فترة ليلية (مناوبة كاملة)</option>
                     </select>
                 </div>
@@ -488,48 +495,84 @@
         </div>
     </div>
 
-    <!-- الوثيقة 2: تقرير التقييم الفردي للموظف -->
-    <div class="sheet-wrapper" id="printableReportWrapper" style="display: none;">
-        <div class="sheet-container" id="printableReport">
+    <!-- الوثيقة 2: تقرير التبليغ عن الغياب أو التأخر -->
+    <div class="sheet-wrapper" id="printableAbsenceWrapper" style="display: none;">
+        <div class="sheet-container">
             <div class="official-head">
-                <img id="repLogo" class="head-logo" src="" alt="شعار المؤسسة" style="display: none;">
-                
+                <img id="absLogo" class="head-logo" src="" alt="شعار المؤسسة" style="display: none;">
                 <div class="head-center-top">الجمهورية الجزائرية الديمقراطية الشعبية<br>وزارة الصحة</div>
                 
                 <div class="report-header-flex">
                     <div class="report-header-right">
-                        <span id="repFacility"></span><br>
-                        <span id="repSubFacility"></span><br>
-                        رقم المراسلة: <span id="repDocNum"></span>
+                        المركز الصحي: <span id="absCenter"></span><br>
+                        رقم المراسلة: <span id="absDocNum"></span>
                     </div>
                     <div class="report-header-left">
-                        <div style="font-size: 14px;">إلى السيد(ة):</div>
-                        <div style="font-size: 16px; margin-bottom: 8px;">مدير المؤسسة العمومية للصحة الجوارية</div>
-                        <div style="font-size: 13px;">مرسل من طرف:</div>
-                        <div style="font-size: 15px;" id="repCenterFrom"></div>
+                        إلى السيد(ة) مدير(ة)<br>
+                        المؤسسة العمومية <span id="absFacility"></span>
                     </div>
                 </div>
-                <div class="head-title-block">
-                    <div class="main-title" style="margin-bottom: 20px;">تقرير تقييم الأداء والمواظبة لموظف</div>
+                
+                <div class="head-title-block" style="margin-top: 30px;">
+                    <div class="main-title">تقرير تبليغ عن غياب / تأخر غير مبرر</div>
+                </div>
+            </div>
+
+            <div class="report-body-text" contenteditable="true">
+                نرفع إلى سيادتكم الموقرة هذا التقرير الذي يخص تبليغ عن غياب غير مبرر يخص الموظف(ة): <strong><span id="absEmpName"></span></strong> 
+                العامل(ة) بمصلحة: <strong><span id="absEmpDept"></span></strong>، 
+                وذلك لمدة: <strong><span id="absDuration"></span></strong>، 
+                بتاريخ: <strong><span id="absDate"></span></strong>.<br><br>
+                لذا نرجو من سيادتكم اتخاذ الإجراءات الإدارية اللازمة المعمول بها.
+            </div>
+
+            <div class="signatures-area" style="margin-top: 80px; justify-content: flex-start; padding-right: 40px;">
+                <div style="text-align: right;">إمضاء رئيس المصلحة</div>
+            </div>
+            <div class="credits" style="margin-top: 40px;">من تصميم All World Digital</div>
+        </div>
+    </div>
+
+    <!-- الوثيقة 3: تقرير جدول التقييم الشامل للمصلحة -->
+    <div class="sheet-wrapper" id="printableEvalWrapper" style="display: none;">
+        <div class="sheet-container">
+            <div class="official-head">
+                <img id="evalLogo" class="head-logo" src="" alt="شعار المؤسسة" style="display: none;">
+                <div class="head-center-top">الجمهورية الجزائرية الديمقراطية الشعبية<br>وزارة الصحة</div>
+                
+                <div class="report-header-flex">
+                    <div class="report-header-right">
+                        المركز الصحي: <span id="evalCenter"></span><br>
+                        مصلحة: <span id="evalDeptName"></span>
+                    </div>
+                    <div class="report-header-left">
+                        إلى السيد(ة) مدير(ة)<br>
+                        المؤسسة العمومية <span id="evalFacility"></span>
+                    </div>
+                </div>
+                
+                <div class="head-title-block" style="margin-top: 20px;">
+                    <div class="main-title">جدول تقييم الأداء والمواظبة</div>
                 </div>
             </div>
 
             <table class="report-grid">
-                <tr><th>اسم الموظف / العون المعني</th><td id="repEmpName"></td></tr>
-                <tr><th>المصلحة التابع لها</th><td id="repEmpDept"></td></tr>
-                <tr><th>فترة العمل المعتادة</th><td id="repEmpType"></td></tr>
-                <tr><th>عدد أيام الغياب المبررة والغير مبررة</th><td id="repEmpAbsence"></td></tr>
-                <tr><th>إجمالي ساعات التأخر عن المناوبة</th><td id="repEmpDelay"></td></tr>
-                <tr><th>تقييم الأداء العام</th><td id="repEmpRating"></td></tr>
-                <tr><th>ملاحظات رئيس المصلحة / الإدارة</th><td id="repEmpRemarks"></td></tr>
+                <thead>
+                    <tr>
+                        <th>الاسم واللقب</th>
+                        <th>التأخر (ساعات)</th>
+                        <th>الغياب (أيام)</th>
+                        <th>التقييم</th>
+                        <th>الملاحظات الإدارية</th>
+                    </tr>
+                </thead>
+                <tbody id="evalTableBody"></tbody>
             </table>
 
-            <div class="signatures-area" style="margin-top: 60px;">
-                <div>إمضاء المعني</div>
-                <div>رئيس المصلحة المختصة</div>
-                <div>مدير المؤسسة العمومية</div>
+            <div class="signatures-area" style="margin-top: 60px; justify-content: flex-start; padding-right: 40px;">
+                <div style="text-align: right;">إمضاء رئيس المصلحة</div>
             </div>
-            <div class="credits">من تصميم All World Digital</div>
+            <div class="credits" style="margin-top: 40px;">من تصميم All World Digital</div>
         </div>
     </div>
 
@@ -555,9 +598,13 @@
             outLogo.src = logoDataUrl;
             outLogo.style.display = 'block';
 
-            const repLogo = document.getElementById('repLogo');
-            repLogo.src = logoDataUrl;
-            repLogo.style.display = 'block';
+            const absLogo = document.getElementById('absLogo');
+            absLogo.src = logoDataUrl;
+            absLogo.style.display = 'block';
+            
+            const evalLogo = document.getElementById('evalLogo');
+            evalLogo.src = logoDataUrl;
+            evalLogo.style.display = 'block';
         }
 
         // ==========================================
@@ -622,12 +669,12 @@
             paramedical: {
                 title: "جدول المداومة الشبه الطبية", label: "المداومة الشبه طبية", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
-                    { name: "حمان ف", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "عيساوي ر", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "خليفي ع", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "بن عاشور ر", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "لزرق س", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "ثليجي ن", type: "day", isVacation: true, vStart: "2026-08-10", vEnd: "2026-08-31", absence: 0, delay: 0, rating: "جيد جداً", remarks: "عطلة سنوية" },
+                    { name: "حمان ف", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "عيساوي ر", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "خليفي ع", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "بن عاشور ر", type: "evening", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "لزرق س", type: "evening", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "ثليجي ن", type: "morning", isVacation: true, vStart: "2026-08-10", vEnd: "2026-08-31", absence: 0, delay: 0, rating: "جيد جداً", remarks: "عطلة سنوية" },
                     { name: "حمان ع", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "بوعامر م", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "سحنون ع غ", type: "night", isVacation: true, vStart: "2026-08-20", vEnd: "2026-09-11", absence: 0, delay: 0, rating: "ممتاز", remarks: "عطلة سنوية" },
@@ -638,8 +685,8 @@
             doctors: {
                 title: "جدول مداومة الأطباء العامين", label: "مداومة الأطباء", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
-                    { name: "د. بلقاسم م", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "د. قدور ع", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "د. بلقاسم م", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "د. قدور ع", type: "evening", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "د. طيبي س", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "د. منصوري ف", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
@@ -648,8 +695,8 @@
             patrols: {
                 title: "جدول الدوريات والخرجات الطبية", label: "الدوريات الطبية", shifts: { s1: "دورية الصباح (08-12)", s2: "دورية المساء (13-16)", s3: "فريق الإسناد والتدخل" },
                 employees: [
-                    { name: "د. رحماني ك", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "عثماني أ", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "د. رحماني ك", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "عثماني أ", type: "evening", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "بوزيد س", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
                 teams: [{ name: "طاقم الدورية الريفية", m1: "د. رحماني ك", m2: "عثماني أ", m3: "بوزيد س" }]
@@ -657,7 +704,7 @@
             lab: {
                 title: "جدول مداومة مصلحة المخبر والتحاليل", label: "مصلحة المخبر", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
-                    { name: "العربي ط", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "العربي ط", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "زيان م", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
                 teams: [{ name: "طاقم المخبر أ", m1: "العربي ط", m2: "", m3: "" }]
@@ -665,7 +712,7 @@
             radio: {
                 title: "جدول مداومة مصلحة الأشعة", label: "مصلحة الأشعة", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
-                    { name: "مرابط ح", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "مرابط ح", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "علالي ي", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
                 teams: [{ name: "فريق الأشعة", m1: "مرابط ح", m2: "", m3: "" }]
@@ -673,15 +720,15 @@
             dental: {
                 title: "جدول مداومة مصلحة جراحة الأسنان", label: "جراحة الأسنان", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "المداومة والاستعجالات" },
                 employees: [
-                    { name: "د. بوزيان", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "ناصري خ", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
+                    { name: "د. بوزيان", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "ناصري خ", type: "evening", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
                 teams: [{ name: "عيادة الأسنان", m1: "د. بوزيان", m2: "ناصري خ", m3: "" }]
             },
             receipts: {
                 title: "جدول مداومة مكتب الإيرادات والتحصيل", label: "مكتب الإيرادات", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
-                    { name: "فلاحي ع", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "فلاحي ع", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "سماتي ر", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
                 teams: [{ name: "مكتب الإيرادات", m1: "فلاحي ع", m2: "", m3: "" }]
@@ -689,7 +736,7 @@
             ambulance: {
                 title: "جدول مداومة سائقي سيارة الإسعاف", label: "سائقي الإسعاف", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
-                    { name: "بوعمامة ع", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "بوعمامة ع", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "لخضر م", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
                 teams: [{ name: "فريق الإسعاف 1", m1: "بوعمامة ع", m2: "", m3: "" }]
@@ -697,7 +744,7 @@
             security: {
                 title: "جدول مداومة الحراسة والأمن", label: "الحراسة والأمن", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
-                    { name: "بن علي ك", type: "day", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "بن علي ك", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "تواتي س", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
                 teams: [{ name: "فريق الحراسة 1", m1: "بن علي ك", m2: "", m3: "" }]
@@ -728,6 +775,12 @@
             const savedData = localStorage.getItem('app_departments_data');
             if (savedData) {
                 departmentsData = JSON.parse(savedData);
+                // ترقية البيانات القديمة إن وجدت ("day" تصبح "morning" لتجنب الأعطال)
+                for (let dept in departmentsData) {
+                    departmentsData[dept].employees.forEach(emp => {
+                        if (emp.type === "day") emp.type = "morning";
+                    });
+                }
             } else {
                 departmentsData = JSON.parse(JSON.stringify(defaultDepartmentsData));
             }
@@ -737,10 +790,12 @@
                 const s = JSON.parse(savedSettings);
                 document.getElementById("selectedMonth").value = s.month || "2026-08";
                 document.getElementById("inDocNum").value = s.docNum || "............ /م-ع-ص-ج/ ع-ص/26";
-                document.getElementById("inDayShiftNote").value = s.shiftNote || "ملاحظة: علواني ف تعمل الساعات العادية";
+                document.getElementById("inDayShiftNote").value = s.shiftNote || "ملاحظة: علواني ف تعمل الساعات العادية (08:00 إلى 12:00 و 13:00 إلى 16:30)";
                 document.getElementById("morningStaffCount").value = s.mCount || "3";
                 document.getElementById("eveningStaffCount").value = s.eCount || "2";
             }
+
+            document.getElementById("reportDate").valueAsDate = new Date();
 
             const savedLogo = localStorage.getItem('app_saved_logo');
             if (savedLogo) {
@@ -755,11 +810,11 @@
                 localStorage.removeItem('app_departments_data');
                 localStorage.removeItem('app_saved_logo');
                 document.getElementById('outLogo').style.display = 'none';
-                document.getElementById('repLogo').style.display = 'none';
+                document.getElementById('absLogo').style.display = 'none';
+                document.getElementById('evalLogo').style.display = 'none';
                 loadSavedData();
             }
         }
-
 
         // التبديل بين المصالح
         function switchDepartment(deptKey) {
@@ -794,15 +849,17 @@
             const currentList = departmentsData[currentDept].employees;
 
             currentList.forEach((emp, index) => {
+                let typeLabel = emp.type === "morning" ? "فترة صباحية" : (emp.type === "evening" ? "فترة مسائية" : "فترة ليلية");
+                
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td><strong>${emp.name}</strong></td>
-                    <td>${emp.type === "night" ? "ليلي / كامل" : "نهاري"}</td>
+                    <td>${typeLabel}</td>
                     <td>${emp.isVacation ? '<span class="badge-vacation">عطلة</span>' : '<span class="badge-active">نشط</span>'}</td>
-                    <td>${emp.absence} غياب | ${emp.delay} س تأخر</td>
+                    <td dir="rtl">${emp.absence || 0} أيام | ${emp.delay || 0} ساعات</td>
                     <td>${emp.rating || 'ممتاز'}</td>
                     <td style="text-align:center;">
-                        <button class="btn-eval" onclick="openModal(${index})">📝 التقييم</button>
+                        <button class="btn-eval" onclick="openModal(${index})">📋 الحضور والتقييم</button>
                         <button class="btn-delete" onclick="deleteEmployee(${index})">حذف</button>
                     </td>
                 `;
@@ -815,7 +872,8 @@
             const container = document.getElementById("teamsContainer");
             container.innerHTML = "";
             const currentTeams = departmentsData[currentDept].teams;
-            const dayStaffNames = departmentsData[currentDept].employees.filter(e => e.type === "day").map(e => e.name);
+            // الموظفون المتاحون لتشكيل الفرق (الصباح والمساء معاً)
+            const dayStaffNames = departmentsData[currentDept].employees.filter(e => e.type !== "night").map(e => e.name);
 
             currentTeams.forEach((team, tIdx) => {
                 const box = document.createElement("div");
@@ -891,7 +949,7 @@
             generateSchedule(); 
         }
 
-        // نافذة التقييم
+        // نافذة الحضور والتقييم
         function openModal(index) {
             currentEditIndex = index;
             const emp = departmentsData[currentDept].employees[index];
@@ -910,7 +968,7 @@
 
         function closeModal() { document.getElementById("evalModal").style.display = "none"; currentEditIndex = -1; }
 
-        function saveEvaluation() {
+        function saveEvaluationAndClose() {
             if (currentEditIndex > -1) {
                 const emp = departmentsData[currentDept].employees[currentEditIndex];
                 emp.absence = document.getElementById("evalAbsence").value;
@@ -923,10 +981,17 @@
             }
         }
 
-        function printIndividualReport() {
+        // إخفاء وإظهار الواجهات للطباعة
+        function hideAllWrappers() {
+            document.getElementById("printableScheduleWrapper").style.display = "none";
+            document.getElementById("printableAbsenceWrapper").style.display = "none";
+            document.getElementById("printableEvalWrapper").style.display = "none";
+        }
+
+        // طباعة تقرير التبليغ عن غياب وتأخر
+        function printAbsenceReport() {
             if (currentEditIndex === -1) return;
             
-            // 1. تحديث البيانات يدويا قبل الطباعة وحفظها
             const emp = departmentsData[currentDept].employees[currentEditIndex];
             emp.absence = document.getElementById("evalAbsence").value;
             emp.delay = document.getElementById("evalDelay").value;
@@ -934,34 +999,66 @@
             emp.remarks = document.getElementById("evalRemarks").value;
             saveToLocalStorage();
 
-            // 2. تعبئة بيانات التقرير
-            document.getElementById("repFacility").innerText = document.getElementById("inFacility").value;
-            document.getElementById("repSubFacility").innerText = document.getElementById("inSubFacility").value;
-            document.getElementById("repDocNum").innerText = document.getElementById("inDocNum").value;
-            document.getElementById("repCenterFrom").innerText = document.getElementById("inCenter").value;
+            document.getElementById("absCenter").innerText = document.getElementById("inCenter").value;
+            document.getElementById("absDocNum").innerText = document.getElementById("inDocNum").value;
+            document.getElementById("absFacility").innerText = document.getElementById("inSubFacility").value;
 
-            document.getElementById("repEmpName").innerText = emp.name;
-            document.getElementById("repEmpDept").innerText = departmentsData[currentDept].title;
-            document.getElementById("repEmpType").innerText = emp.type === "night" ? "فترة ليلية / كاملة" : "فترة نهارية";
-            document.getElementById("repEmpAbsence").innerText = emp.absence + " يوم / أيام";
-            document.getElementById("repEmpDelay").innerText = emp.delay + " ساعة / ساعات";
-            document.getElementById("repEmpRating").innerText = emp.rating;
-            document.getElementById("repEmpRemarks").innerText = emp.remarks || "لا توجد ملاحظات إضافية.";
+            document.getElementById("absEmpName").innerText = emp.name;
+            document.getElementById("absEmpDept").innerText = departmentsData[currentDept].label;
+            
+            let dur = [];
+            if(emp.absence > 0) dur.push(emp.absence + " أيام غياب");
+            if(emp.delay > 0) dur.push(emp.delay + " ساعات تأخر");
+            document.getElementById("absDuration").innerText = dur.length > 0 ? dur.join(" و ") : "غير محدد";
+            
+            let d = document.getElementById("reportDate").value;
+            document.getElementById("absDate").innerText = d ? d : new Date().toLocaleDateString('en-GB');
 
-            // 3. إظهار التقرير وإخفاء الجدول
-            document.getElementById("printableScheduleWrapper").style.display = "none";
-            document.getElementById("printableReportWrapper").style.display = "block";
-
-            // 4. الطباعة
-            const originalTitle = document.title;
-            document.title = "تقرير_" + emp.name.replace(/\s+/g, '_');
+            hideAllWrappers();
+            document.getElementById("printableAbsenceWrapper").style.display = "block";
             window.print();
             
-            // 5. العودة للحالة الطبيعية
-            document.title = originalTitle;
-            document.getElementById("printableReportWrapper").style.display = "none";
+            hideAllWrappers();
             document.getElementById("printableScheduleWrapper").style.display = "block";
+            renderEmployeesList();
+            closeModal();
+        }
+
+        // طباعة جدول التقييم الشامل للمصلحة
+        function printEvalReport() {
+            if (currentEditIndex > -1) {
+                const emp = departmentsData[currentDept].employees[currentEditIndex];
+                emp.absence = document.getElementById("evalAbsence").value;
+                emp.delay = document.getElementById("evalDelay").value;
+                emp.rating = document.getElementById("evalRating").value;
+                emp.remarks = document.getElementById("evalRemarks").value;
+                saveToLocalStorage();
+            }
+
+            document.getElementById("evalCenter").innerText = document.getElementById("inCenter").value;
+            document.getElementById("evalDeptName").innerText = departmentsData[currentDept].label;
+            document.getElementById("evalFacility").innerText = document.getElementById("inSubFacility").value;
+
+            const tbody = document.getElementById("evalTableBody");
+            tbody.innerHTML = "";
+            departmentsData[currentDept].employees.forEach(emp => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${emp.name}</td>
+                        <td dir="rtl">${emp.delay || 0}</td>
+                        <td dir="rtl">${emp.absence || 0}</td>
+                        <td>${emp.rating || 'ممتاز'}</td>
+                        <td>${emp.remarks || ''}</td>
+                    </tr>
+                `;
+            });
+
+            hideAllWrappers();
+            document.getElementById("printableEvalWrapper").style.display = "block";
+            window.print();
             
+            hideAllWrappers();
+            document.getElementById("printableScheduleWrapper").style.display = "block";
             renderEmployeesList();
             closeModal();
         }
@@ -1074,8 +1171,8 @@
         }
 
         function printSchedule() {
+            hideAllWrappers();
             document.getElementById("printableScheduleWrapper").style.display = "block";
-            document.getElementById("printableReportWrapper").style.display = "none";
             window.print();
         }
 
