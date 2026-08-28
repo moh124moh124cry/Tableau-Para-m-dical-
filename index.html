@@ -63,7 +63,7 @@
             box-shadow: 0 2px 4px rgba(30, 58, 138, 0.3);
         }
 
-        /* لوحة التحكم والإدارة */
+        /* لوحة التحكم الإدارية */
         .no-print {
             background: #ffffff;
             padding: 20px;
@@ -91,6 +91,13 @@
         input, select, textarea {
             padding: 9px 10px; border: 1px solid #cbd5e1; border-radius: 6px;
             font-size: 13px; outline: none; background: #fff; width: 100%;
+        }
+
+        /* تخصيص زر رفع الملف */
+        input[type="file"] {
+            padding: 6px;
+            background: #f8fafc;
+            cursor: pointer;
         }
 
         .locked-input {
@@ -168,7 +175,18 @@
 
         .official-head { line-height: 1.4; margin-bottom: 15px; color: #000; }
         .head-center-top { text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 15px; }
-        .head-right-block { text-align: right; font-weight: bold; font-size: 15px; margin-bottom: 15px; }
+        
+        /* تنسيق قسم الترويسة ليحتوي اللوغو على اليسار */
+        .header-flex-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        .head-right-block { text-align: right; font-weight: bold; font-size: 15px; width: 60%; }
+        .head-left-block { text-align: left; width: 35%; padding-left: 10px; }
+        .head-left-block img { max-height: 85px; max-width: 130px; object-fit: contain; }
+
         .head-title-block { text-align: center; font-weight: bold; margin-bottom: 10px; }
         .head-title-block .main-title { font-size: 18px; text-decoration: underline; margin-bottom: 5px; font-weight: 900; }
         .head-title-block .center-name { font-size: 16px; font-weight: 900; }
@@ -315,6 +333,11 @@
                 <label style="color: #b91c1c;">المركز الصحي / المصلحة (مقفلة بالترخيص):</label>
                 <input type="text" id="inCenter" class="locked-input" readonly>
             </div>
+            <!-- زر رفع اللوغو الجديد -->
+            <div class="form-group" style="grid-column: span 2;">
+                <label style="color: #15803d;">إضافة شعار المؤسسة (يظهر على الجهة اليسرى):</label>
+                <input type="file" id="logoInput" accept="image/*" onchange="handleLogoUpload(event)">
+            </div>
         </div>
 
         <div class="grid-layout">
@@ -421,10 +444,17 @@
                 <div class="head-center-top">
                     الجمهورية الجزائرية الديمقراطية الشعبية<br>وزارة الصحة
                 </div>
-                <div class="head-right-block">
-                    <span id="outFacility"></span><br>
-                    <span id="outSubFacility"></span><br>
-                    رقم............. /م-ع-ص-ج/ ع-ص/<span id="outDocNum"></span>
+                <!-- هيكل الترويسة الجديد الذي يدعم اللوغو -->
+                <div class="header-flex-box">
+                    <div class="head-right-block">
+                        <span id="outFacility"></span><br>
+                        <span id="outSubFacility"></span><br>
+                        رقم............. /م-ع-ص-ج/ ع-ص/<span id="outDocNum"></span>
+                    </div>
+                    <div class="head-left-block">
+                        <!-- مساحة اللوغو -->
+                        <img id="outLogo" src="" alt="شعار المؤسسة" style="display: none;">
+                    </div>
                 </div>
                 <div class="head-title-block">
                     <div class="main-title" id="outMainTitle">جدول المداومة</div>
@@ -463,12 +493,20 @@
         <div class="sheet-container" id="printableReport">
             <div class="official-head">
                 <div class="head-center-top">الجمهورية الجزائرية الديمقراطية الشعبية<br>وزارة الصحة</div>
-                <div class="report-header-flex">
-                    <div class="report-header-right">
+                
+                <div class="header-flex-box" style="margin-top:20px;">
+                    <div class="head-right-block">
                         <span id="repFacility"></span><br>
                         <span id="repSubFacility"></span><br>
                         رقم المراسلة: <span id="repDocNum"></span>
                     </div>
+                    <div class="head-left-block">
+                        <img id="repLogo" src="" alt="شعار المؤسسة" style="display: none;">
+                    </div>
+                </div>
+
+                <div class="report-header-flex" style="margin-top: 10px;">
+                    <div class="report-header-right"></div>
                     <div class="report-header-left">
                         <div style="font-size: 14px;">إلى السيد(ة):</div>
                         <div style="font-size: 16px; margin-bottom: 8px;">مدير المؤسسة العمومية للصحة الجوارية</div>
@@ -501,6 +539,30 @@
     </div>
 
     <script>
+        // ==========================================
+        // وظيفة رفع الشعار (Logo) بشكل محلي بدون انترنت
+        // ==========================================
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const logoDataUrl = e.target.result;
+                    
+                    // إظهار اللوغو في جدول المداومة
+                    const outLogo = document.getElementById('outLogo');
+                    outLogo.src = logoDataUrl;
+                    outLogo.style.display = 'block';
+
+                    // إظهار اللوغو في ورقة تقرير الموظف أيضاً
+                    const repLogo = document.getElementById('repLogo');
+                    repLogo.src = logoDataUrl;
+                    repLogo.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
         // ==========================================
         // 🔒 إدارة التراخيص وحماية المنظومة 🔒
         // ==========================================
