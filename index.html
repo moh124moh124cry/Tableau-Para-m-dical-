@@ -228,7 +228,7 @@
         .report-header-right { width: 50%; font-weight: bold; font-size: 15px; line-height: 1.5; }
         .report-header-left { width: 45%; border: 2px solid #000; padding: 15px; border-radius: 6px; background: #fafafa; }
         .report-grid { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .report-grid th, .report-grid td { border: 1.5px solid #000; padding: 12px; text-align: right; font-size: 14px; font-weight: bold; color: #000; }
+        .report-grid th, .report-grid td { border: 1px solid #000; padding: 12px; text-align: right; font-size: 14px; font-weight: bold; color: #000; }
         .report-grid th { background: #f2f2f2; width: 35%; }
 
         @media print {
@@ -309,7 +309,7 @@
             </div>
             <div class="btn-group" style="justify-content: flex-end; margin-top: 20px;">
                 <button class="btn-print" onclick="printIndividualReport()">🖨️ طباعة التقرير</button>
-                <button class="btn-add" onclick="saveEvaluation()">💾 حفظ التقييم</button>
+                <button class="btn-add" onclick="saveEvaluationAndClose()">💾 حفظ التقييم</button>
                 <button class="btn-secondary" onclick="closeModal()">❌ إلغاء</button>
             </div>
         </div>
@@ -335,7 +335,7 @@
                 <label style="color: #b91c1c;">المركز الصحي / المصلحة (مقفلة بالترخيص):</label>
                 <input type="text" id="inCenter" class="locked-input" readonly>
             </div>
-            <!-- زر رفع اللوغو الجديد -->
+            <!-- زر رفع اللوغو -->
             <div class="form-group" style="grid-column: span 2;">
                 <label style="color: #15803d;">إضافة شعار المؤسسة (يظهر في أعلى أقصى اليسار):</label>
                 <input type="file" id="logoInput" accept="image/*" onchange="handleLogoUpload(event)">
@@ -373,7 +373,7 @@
             </div>
         </div>
 
-        <!-- إدارة موظفي المصلحة المحددة -->
+        <!-- إدارة موظفي المصلحة המحددة -->
         <div class="staff-management">
             <div class="section-title">👥 إدارة طاقم <span id="staffDeptNameLabel">المداومة الشبه طبية</span></div>
             <div class="grid-layout">
@@ -440,7 +440,7 @@
     </div>
 
     <!-- الوثيقة 1: جدول المداومة الرسمي للطباعة -->
-    <div class="sheet-wrapper">
+    <div class="sheet-wrapper" id="printableScheduleWrapper">
         <div class="sheet-container" id="printableSchedule">
             
             <div class="official-head">
@@ -535,7 +535,7 @@
 
     <script>
         // ==========================================
-        // وظيفة حفظ واسترجاع الشعار (Logo) في المتصفح
+        // وظيفة حفظ واسترجاع الشعار (Logo)
         // ==========================================
         function handleLogoUpload(event) {
             const file = event.target.files[0];
@@ -544,7 +544,7 @@
                 reader.onload = function(e) {
                     const logoDataUrl = e.target.result;
                     applyLogo(logoDataUrl);
-                    localStorage.setItem('app_saved_logo', logoDataUrl); // حفظ الشعار
+                    localStorage.setItem('app_saved_logo', logoDataUrl);
                 };
                 reader.readAsDataURL(file);
             }
@@ -714,7 +714,6 @@
         function saveToLocalStorage() {
             localStorage.setItem('app_departments_data', JSON.stringify(departmentsData));
             
-            // حفظ الإعدادات العامة أيضاً
             const settings = {
                 month: document.getElementById("selectedMonth").value,
                 docNum: document.getElementById("inDocNum").value,
@@ -726,15 +725,13 @@
         }
 
         function loadSavedData() {
-            // جلب البيانات أو استخدام الافتراضية
             const savedData = localStorage.getItem('app_departments_data');
             if (savedData) {
                 departmentsData = JSON.parse(savedData);
             } else {
-                departmentsData = JSON.parse(JSON.stringify(defaultDepartmentsData)); // نسخ عميق
+                departmentsData = JSON.parse(JSON.stringify(defaultDepartmentsData));
             }
 
-            // جلب الإعدادات العامة
             const savedSettings = localStorage.getItem('app_general_settings');
             if (savedSettings) {
                 const s = JSON.parse(savedSettings);
@@ -745,13 +742,12 @@
                 document.getElementById("eveningStaffCount").value = s.eCount || "2";
             }
 
-            // جلب الشعار المحفوظ
             const savedLogo = localStorage.getItem('app_saved_logo');
             if (savedLogo) {
                 applyLogo(savedLogo);
             }
 
-            switchDepartment(currentDept); // تهيئة العرض
+            switchDepartment(currentDept);
         }
 
         function resetData() {
@@ -929,9 +925,16 @@
 
         function printIndividualReport() {
             if (currentEditIndex === -1) return;
-            saveEvaluation();
+            
+            // 1. تحديث البيانات يدويا قبل الطباعة وحفظها
             const emp = departmentsData[currentDept].employees[currentEditIndex];
+            emp.absence = document.getElementById("evalAbsence").value;
+            emp.delay = document.getElementById("evalDelay").value;
+            emp.rating = document.getElementById("evalRating").value;
+            emp.remarks = document.getElementById("evalRemarks").value;
+            saveToLocalStorage();
 
+            // 2. تعبئة بيانات التقرير
             document.getElementById("repFacility").innerText = document.getElementById("inFacility").value;
             document.getElementById("repSubFacility").innerText = document.getElementById("inSubFacility").value;
             document.getElementById("repDocNum").innerText = document.getElementById("inDocNum").value;
@@ -945,16 +948,20 @@
             document.getElementById("repEmpRating").innerText = emp.rating;
             document.getElementById("repEmpRemarks").innerText = emp.remarks || "لا توجد ملاحظات إضافية.";
 
-            document.querySelector(".sheet-wrapper").style.display = "none";
+            // 3. إظهار التقرير وإخفاء الجدول
+            document.getElementById("printableScheduleWrapper").style.display = "none";
             document.getElementById("printableReportWrapper").style.display = "block";
 
+            // 4. الطباعة
             const originalTitle = document.title;
             document.title = "تقرير_" + emp.name.replace(/\s+/g, '_');
             window.print();
             
+            // 5. العودة للحالة الطبيعية
             document.title = originalTitle;
             document.getElementById("printableReportWrapper").style.display = "none";
-            document.querySelector(".sheet-wrapper").style.display = "block";
+            document.getElementById("printableScheduleWrapper").style.display = "block";
+            
             renderEmployeesList();
             closeModal();
         }
@@ -986,7 +993,6 @@
             const mCountLimit = parseInt(document.getElementById("morningStaffCount").value);
             const eCountLimit = parseInt(document.getElementById("eveningStaffCount").value);
             
-            // حفظ الإعدادات في المتصفح في كل مرة يتم توليد الجدول
             saveToLocalStorage();
 
             const totalDays = new Date(year, month, 0).getDate();
@@ -1068,7 +1074,7 @@
         }
 
         function printSchedule() {
-            document.querySelector(".sheet-wrapper").style.display = "block";
+            document.getElementById("printableScheduleWrapper").style.display = "block";
             document.getElementById("printableReportWrapper").style.display = "none";
             window.print();
         }
@@ -1082,7 +1088,7 @@
 
         window.onload = function() {
             if (checkLocalLicense()) {
-                loadSavedData(); // استدعاء البيانات المحفوظة بدلاً من الافتراضية
+                loadSavedData();
             }
         };
     </script>
