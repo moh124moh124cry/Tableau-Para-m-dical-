@@ -173,20 +173,23 @@
             margin: 0 auto; padding: 30px 40px; box-shadow: 0 4px 10px rgba(0,0,0,0.12); color: #000 !important;
         }
 
-        .official-head { line-height: 1.4; margin-bottom: 15px; color: #000; }
-        .head-center-top { text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 15px; }
-        
-        /* تنسيق قسم الترويسة ليحتوي اللوغو على اليسار */
-        .header-flex-box {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 15px;
+        /* تنسيق الترويسة ليحتوي اللوغو بتموضع مطلق في أقصى اليسار */
+        .official-head {
+            position: relative; /* ضروري لعمل اللوغو */
+            line-height: 1.4; 
+            margin-bottom: 15px; 
+            color: #000; 
         }
-        .head-right-block { text-align: right; font-weight: bold; font-size: 15px; width: 60%; }
-        .head-left-block { text-align: left; width: 35%; padding-left: 10px; }
-        .head-left-block img { max-height: 85px; max-width: 130px; object-fit: contain; }
-
+        .head-logo {
+            position: absolute;
+            left: 0;
+            top: 0;
+            max-height: 95px;
+            max-width: 140px;
+            object-fit: contain;
+        }
+        .head-center-top { text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 15px; }
+        .head-right-block { text-align: right; font-weight: bold; font-size: 15px; margin-bottom: 15px; }
         .head-title-block { text-align: center; font-weight: bold; margin-bottom: 10px; }
         .head-title-block .main-title { font-size: 18px; text-decoration: underline; margin-bottom: 5px; font-weight: 900; }
         .head-title-block .center-name { font-size: 16px; font-weight: 900; }
@@ -335,7 +338,7 @@
             </div>
             <!-- زر رفع اللوغو الجديد -->
             <div class="form-group" style="grid-column: span 2;">
-                <label style="color: #15803d;">إضافة شعار المؤسسة (يظهر على الجهة اليسرى):</label>
+                <label style="color: #15803d;">إضافة شعار المؤسسة (يظهر في أعلى أقصى اليسار):</label>
                 <input type="file" id="logoInput" accept="image/*" onchange="handleLogoUpload(event)">
             </div>
         </div>
@@ -376,8 +379,8 @@
             <div class="section-title">👥 إدارة طاقم <span id="staffDeptNameLabel">المداومة الشبه طبية</span></div>
             <div class="grid-layout">
                 <div class="form-group">
-                    <label>اسم الموظف / الطبيب / العون:</label>
-                    <input type="text" id="staffNameInput" placeholder="مثال: د. بن عاشور">
+                    <label>اسم الموظف / العون:</label>
+                    <input type="text" id="staffNameInput" placeholder="مثال: حمان ع">
                 </div>
                 <div class="form-group">
                     <label>نوع التعيين:</label>
@@ -441,21 +444,19 @@
         <div class="sheet-container" id="printableSchedule">
             
             <div class="official-head">
+                <!-- اللوغو متموضع في أقصى اليسار في الأعلى -->
+                <img id="outLogo" class="head-logo" src="" alt="شعار المؤسسة" style="display: none;">
+                
                 <div class="head-center-top">
                     الجمهورية الجزائرية الديمقراطية الشعبية<br>وزارة الصحة
                 </div>
-                <!-- هيكل الترويسة الجديد الذي يدعم اللوغو -->
-                <div class="header-flex-box">
-                    <div class="head-right-block">
-                        <span id="outFacility"></span><br>
-                        <span id="outSubFacility"></span><br>
-                        رقم............. /م-ع-ص-ج/ ع-ص/<span id="outDocNum"></span>
-                    </div>
-                    <div class="head-left-block">
-                        <!-- مساحة اللوغو -->
-                        <img id="outLogo" src="" alt="شعار المؤسسة" style="display: none;">
-                    </div>
+                
+                <div class="head-right-block">
+                    <span id="outFacility"></span><br>
+                    <span id="outSubFacility"></span><br>
+                    رقم............. /م-ع-ص-ج/ ع-ص/<span id="outDocNum"></span>
                 </div>
+                
                 <div class="head-title-block">
                     <div class="main-title" id="outMainTitle">جدول المداومة</div>
                     <div class="center-name" id="outCenter"></div>
@@ -492,21 +493,17 @@
     <div class="sheet-wrapper" id="printableReportWrapper" style="display: none;">
         <div class="sheet-container" id="printableReport">
             <div class="official-head">
+                <!-- اللوغو متموضع في أقصى اليسار في الأعلى -->
+                <img id="repLogo" class="head-logo" src="" alt="شعار المؤسسة" style="display: none;">
+                
                 <div class="head-center-top">الجمهورية الجزائرية الديمقراطية الشعبية<br>وزارة الصحة</div>
                 
-                <div class="header-flex-box" style="margin-top:20px;">
-                    <div class="head-right-block">
+                <div class="report-header-flex">
+                    <div class="report-header-right">
                         <span id="repFacility"></span><br>
                         <span id="repSubFacility"></span><br>
                         رقم المراسلة: <span id="repDocNum"></span>
                     </div>
-                    <div class="head-left-block">
-                        <img id="repLogo" src="" alt="شعار المؤسسة" style="display: none;">
-                    </div>
-                </div>
-
-                <div class="report-header-flex" style="margin-top: 10px;">
-                    <div class="report-header-right"></div>
                     <div class="report-header-left">
                         <div style="font-size: 14px;">إلى السيد(ة):</div>
                         <div style="font-size: 16px; margin-bottom: 8px;">مدير المؤسسة العمومية للصحة الجوارية</div>
@@ -549,12 +546,10 @@
                 reader.onload = function(e) {
                     const logoDataUrl = e.target.result;
                     
-                    // إظهار اللوغو في جدول المداومة
                     const outLogo = document.getElementById('outLogo');
                     outLogo.src = logoDataUrl;
                     outLogo.style.display = 'block';
 
-                    // إظهار اللوغو في ورقة تقرير الموظف أيضاً
                     const repLogo = document.getElementById('repLogo');
                     repLogo.src = logoDataUrl;
                     repLogo.style.display = 'block';
@@ -748,20 +743,16 @@
         let currentDept = "paramedical";
         let currentEditIndex = -1;
 
-        // التبديل بين المصالح
         function switchDepartment(deptKey) {
             currentDept = deptKey;
             
-            // تحديث الأزرار
             document.querySelectorAll(".dept-btn").forEach(btn => btn.classList.remove("active"));
             event.target.classList.add("active");
 
-            // تحديث العناوين في لوحة التحكم
             const dept = departmentsData[currentDept];
             document.getElementById("currentDeptTitleBadge").innerText = dept.title;
             document.getElementById("staffDeptNameLabel").innerText = dept.label;
 
-            // تحديث عناوين الورقة الرسمية
             document.getElementById("headerShift1").innerText = dept.shifts.s1;
             document.getElementById("headerShift2").innerText = dept.shifts.s2;
             document.getElementById("headerShift3").innerText = dept.shifts.s3;
@@ -832,25 +823,9 @@
             });
         }
 
-        function updateTeamMember(teamIdx, memberKey, val) { 
-            departmentsData[currentDept].teams[teamIdx][memberKey] = val; 
-            generateSchedule(); 
-        }
-        
-        function addNewTeam() { 
-            departmentsData[currentDept].teams.push({ 
-                name: `فرقة عمل رقم (${departmentsData[currentDept].teams.length + 1})`, 
-                m1: "", m2: "", m3: "" 
-            }); 
-            renderTeamsConfig(); 
-            generateSchedule(); 
-        }
-        
-        function deleteTeam(index) { 
-            departmentsData[currentDept].teams.splice(index, 1); 
-            renderTeamsConfig(); 
-            generateSchedule(); 
-        }
+        function updateTeamMember(teamIdx, memberKey, val) { departmentsData[currentDept].teams[teamIdx][memberKey] = val; generateSchedule(); }
+        function addNewTeam() { departmentsData[currentDept].teams.push({ name: `فرقة عمل رقم (${departmentsData[currentDept].teams.length + 1})`, m1: "", m2: "", m3: "" }); renderTeamsConfig(); generateSchedule(); }
+        function deleteTeam(index) { departmentsData[currentDept].teams.splice(index, 1); renderTeamsConfig(); generateSchedule(); }
 
         function addNewEmployee() {
             const name = document.getElementById("staffNameInput").value.trim();
@@ -860,22 +835,14 @@
             const vEnd = document.getElementById("staffVEnd").value;
 
             if (!name) return alert("يرجى إدخال اسم الموظف / العون");
-            departmentsData[currentDept].employees.push({ 
-                name, type, isVacation: isVac, vStart: isVac ? vStart : "", vEnd: isVac ? vEnd : "", 
-                absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] 
-            });
+            departmentsData[currentDept].employees.push({ name, type, isVacation: isVac, vStart: isVac ? vStart : "", vEnd: isVac ? vEnd : "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] });
             document.getElementById("staffNameInput").value = "";
             renderEmployeesList();
             generateSchedule();
         }
 
-        function deleteEmployee(index) { 
-            departmentsData[currentDept].employees.splice(index, 1); 
-            renderEmployeesList(); 
-            generateSchedule(); 
-        }
+        function deleteEmployee(index) { departmentsData[currentDept].employees.splice(index, 1); renderEmployeesList(); generateSchedule(); }
 
-        // نافذة التقييم
         function openModal(index) {
             currentEditIndex = index;
             const emp = departmentsData[currentDept].employees[index];
@@ -947,7 +914,6 @@
             return curDate >= startDate && curDate <= endDate;
         }
 
-        // توليد الجدول الخاص بالمصلحة الحالية
         function generateSchedule() {
             document.getElementById("outFacility").innerText = document.getElementById("inFacility").value;
             document.getElementById("outSubFacility").innerText = document.getElementById("inSubFacility").value;
