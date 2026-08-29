@@ -226,12 +226,21 @@
 
         /* تقرير التقييم والغياب */
         .report-header-flex { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 20px; margin-bottom: 25px; text-align: right; color: #000; }
-        .report-header-right { width: 50%; font-weight: bold; font-size: 16px; line-height: 1.6; }
-        .report-header-left { width: 45%; font-weight: bold; font-size: 16px; line-height: 1.6; text-align: center; }
+        .report-header-right { width: 48%; font-weight: bold; font-size: 16px; line-height: 1.6; }
+        .report-header-left { width: 48%; font-weight: bold; font-size: 16px; line-height: 1.6; text-align: center; }
         .report-grid { width: 100%; border-collapse: collapse; margin-top: 15px; }
         .report-grid th, .report-grid td { border: 1px solid #000; padding: 12px; text-align: center; font-size: 14px; font-weight: bold; color: #000; }
         .report-grid th { background: #f2f2f2; }
-        .report-body-text { font-size: 18px; line-height: 2; text-align: justify; outline: none; margin-top: 20px; padding: 10px; }
+        
+        /* التنسيقات الجديدة لنص التقرير */
+        .report-body-text { 
+            font-size: 20px; 
+            line-height: 2.2; 
+            text-align: justify; 
+            outline: none; 
+            margin-top: 40px; 
+            padding: 10px 20px; 
+        }
 
         @media print {
             body { background: #fff; padding: 0; margin: 0; }
@@ -519,7 +528,7 @@
             </div>
 
             <div class="report-body-text" contenteditable="true">
-                نرفع إلى سيادتكم الموقرة هذا التقرير الذي يخص تبليغ عن غياب غير مبرر يخص الموظف(ة): <strong><span id="absEmpName"></span></strong> 
+                نرفع إلى سيادتكم الموقرة هذا التقرير للتبليغ عن <strong id="absTypeLabel">غياب/تأخر غير مبرر</strong> للموظف(ة): <strong><span id="absEmpName"></span></strong>، 
                 العامل(ة) بمصلحة: <strong><span id="absEmpDept"></span></strong>، 
                 وذلك لمدة: <strong><span id="absDuration"></span></strong>، 
                 بتاريخ: <strong><span id="absDate"></span></strong>.<br><br>
@@ -527,7 +536,7 @@
             </div>
 
             <div class="signatures-area" style="margin-top: 80px; justify-content: flex-start; padding-right: 40px;">
-                <div style="text-align: right;">إمضاء رئيس المصلحة</div>
+                <div style="text-align: right; width: 100%;">إمضاء رئيس المصلحة</div>
             </div>
             <div class="credits" style="margin-top: 40px;">من تصميم All World Digital</div>
         </div>
@@ -570,7 +579,7 @@
             </table>
 
             <div class="signatures-area" style="margin-top: 60px; justify-content: flex-start; padding-right: 40px;">
-                <div style="text-align: right;">إمضاء رئيس المصلحة</div>
+                <div style="text-align: right; width: 100%;">إمضاء رئيس المصلحة</div>
             </div>
             <div class="credits" style="margin-top: 40px;">من تصميم All World Digital</div>
         </div>
@@ -993,8 +1002,8 @@
             if (currentEditIndex === -1) return;
             
             const emp = departmentsData[currentDept].employees[currentEditIndex];
-            emp.absence = document.getElementById("evalAbsence").value;
-            emp.delay = document.getElementById("evalDelay").value;
+            emp.absence = parseInt(document.getElementById("evalAbsence").value) || 0;
+            emp.delay = parseInt(document.getElementById("evalDelay").value) || 0;
             emp.rating = document.getElementById("evalRating").value;
             emp.remarks = document.getElementById("evalRemarks").value;
             saveToLocalStorage();
@@ -1006,10 +1015,26 @@
             document.getElementById("absEmpName").innerText = emp.name;
             document.getElementById("absEmpDept").innerText = departmentsData[currentDept].label;
             
-            let dur = [];
-            if(emp.absence > 0) dur.push(emp.absence + " أيام غياب");
-            if(emp.delay > 0) dur.push(emp.delay + " ساعات تأخر");
-            document.getElementById("absDuration").innerText = dur.length > 0 ? dur.join(" و ") : "غير محدد";
+            let durList = [];
+            let typeLabel = [];
+            
+            if(emp.absence > 0) { 
+                durList.push(emp.absence + " يوم/أيام"); 
+                typeLabel.push("غياب"); 
+            }
+            if(emp.delay > 0) { 
+                durList.push(emp.delay + " ساعة/ساعات"); 
+                typeLabel.push("تأخر"); 
+            }
+            
+            // في حالة عدم إدخال شيء
+            if(durList.length === 0) {
+                document.getElementById("absDuration").innerText = "___";
+                document.getElementById("absTypeLabel").innerText = "غياب / تأخر";
+            } else {
+                document.getElementById("absDuration").innerText = durList.join(" و ");
+                document.getElementById("absTypeLabel").innerText = typeLabel.join(" و ") + " غير مبرر";
+            }
             
             let d = document.getElementById("reportDate").value;
             document.getElementById("absDate").innerText = d ? d : new Date().toLocaleDateString('en-GB');
