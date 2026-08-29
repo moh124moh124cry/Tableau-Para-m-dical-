@@ -391,7 +391,8 @@
             </div>
             <div class="form-group">
                 <label>رقم المراسلة:</label>
-                <input type="text" id="inDocNum" value="............ /م-ع-ص-ج/ ع-ص/26" onchange="generateSchedule()">
+                <!-- يتم تعبئة الرقم هنا بشكل ديناميكي بناء على التفعيل -->
+                <input type="text" id="inDocNum" value="" onchange="generateSchedule()">
             </div>
             <div class="form-group" style="grid-column: span 2;">
                 <label>ملاحظة الساعات العادية أو الاستخلاف:</label>
@@ -497,7 +498,7 @@
                 <div class="head-right-block">
                     <span id="outFacility"></span><br>
                     <span id="outSubFacility"></span><br>
-                    رقم............. /م-ع-ص-ج/ ع-ص/<span id="outDocNum"></span>
+                    رقم: <span id="outDocNumFull"></span>
                 </div>
                 
                 <div class="head-title-block">
@@ -546,7 +547,7 @@
                 <div class="report-header-flex">
                     <div class="report-header-right">
                         المركز الصحي: <span id="absCenter" contenteditable="true"></span><br>
-                        رقم المراسلة: ........ / <span id="absYear" contenteditable="true"></span>
+                        رقم المراسلة: <span id="absDocNumFull" contenteditable="true"></span>
                     </div>
                     <div class="report-header-left">
                         إلى السيد(ة) مدير(ة)<br>
@@ -710,23 +711,25 @@
         // 🔒 إدارة التراخيص وحماية المنظومة 🔒
         // ==========================================
         const AUTHORIZED_LICENSES = {
-    "MOG-2026": {
-        facility: "مديرية الصحة و السكان لولاية النعامة",
-        subFacility: "المؤسسة العمومية للصحة الجوارية بالعين الصفراء",
-        center: "بالمركز الصحي عنبة بوبكر * مغرار*"
-    },
-    "DEMO-123": {
-        facility: "مديرية الصحة لولاية (تجريبي)",
-        subFacility: "مستشفى تجريبي",
-        center: "مصلحة الاستعجالات"
-    },
-    "DEC-1960": {
-        facility: "مديرية الصحة والسكان لولاية النعامة",
-        subFacility: "  المؤسسة العمومية للصحة الجوارية النعامة ",
-        center: "العيادة متعددة الخدمات 11 ديسمبر 1960"
-    }
-};
-        
+            "MOG-2026": {
+                facility: "مديرية الصحة و السكان لولاية النعامة",
+                subFacility: "المؤسسة العمومية للصحة الجوارية بالعين الصفراء",
+                center: "بالمركز الصحي عنبة بوبكر * مغرار*",
+                docPrefix: "............ /م-ع-ص-ج/ ع-ص/"
+            },
+            "DEMO-123": {
+                facility: "مديرية الصحة لولاية (تجريبي)",
+                subFacility: "مستشفى تجريبي",
+                center: "مصلحة الاستعجالات",
+                docPrefix: "............ /م-ت/"
+            },
+            "DEC-1960": {
+                facility: "مديرية الصحة والسكان لولاية النعامة",
+                subFacility: "المؤسسة العمومية للصحة الجوارية النعامة",
+                center: "العيادة متعددة الخدمات 11 ديسمبر 1960",
+                docPrefix: "............ /م-ع-ص-ج/ ن/" 
+            }
+        };
 
         function checkLocalLicense() {
             const savedCode = localStorage.getItem("app_license_key");
@@ -757,6 +760,10 @@
             document.getElementById("inFacility").value = licenseData.facility;
             document.getElementById("inSubFacility").value = licenseData.subFacility;
             document.getElementById("inCenter").value = licenseData.center;
+            
+            // تحديث رقم المراسلة الافتراضي ديناميكياً مع السنة
+            const currentYear = new Date().getFullYear().toString().slice(-2);
+            document.getElementById("inDocNum").value = (licenseData.docPrefix || "............ /") + currentYear;
         }
 
         // ==========================================
@@ -840,7 +847,6 @@
         function loadSavedData() {
             const savedData = localStorage.getItem('app_departments_data');
             if (savedData) {
-                // ندمج البيانات المحفوظة مع الهيكل الافتراضي لضمان إضافة المصالح الجديدة (الأمومة والرقمنة)
                 let parsed = JSON.parse(savedData);
                 departmentsData = JSON.parse(JSON.stringify(defaultDepartmentsData));
                 for (let key in parsed) {
@@ -1028,9 +1034,7 @@
             const emp = departmentsData[currentDept].employees[index];
             document.getElementById("evalEmpName").innerText = emp.name;
             
-            // التأكد من أن القيمة المختارة موجودة، إن لم تكن نعرض مصلحة الموظف الأساسية
-            let savedDept = emp.subDept || departmentsData[currentDept].label;
-            let cleanSavedDept = savedDept.replace(/^(مصلحة\s*)/, '');
+            let cleanSavedDept = (emp.subDept || departmentsData[currentDept].label).replace(/^(مصلحة\s*)/, '');
             document.getElementById("evalSubDept").value = cleanSavedDept;
             
             document.getElementById("evalAbsence").value = emp.absence || 0;
@@ -1091,7 +1095,7 @@
 
             let centerText = document.getElementById("inCenter").value.replace(/^(ب?المركز الصحي\s*)/, '');
             document.getElementById("absCenter").innerText = centerText;
-            document.getElementById("absYear").innerText = document.getElementById("selectedMonth").value.split("-")[0];
+            document.getElementById("absDocNumFull").innerText = document.getElementById("inDocNum").value;
             document.getElementById("absFacility").innerText = document.getElementById("inSubFacility").value;
 
             document.getElementById("absEmpName").innerText = emp.name;
@@ -1193,7 +1197,9 @@
         function generateSchedule() {
             document.getElementById("outFacility").innerText = document.getElementById("inFacility").value;
             document.getElementById("outSubFacility").innerText = document.getElementById("inSubFacility").value;
-            document.getElementById("outDocNum").innerText = document.getElementById("inDocNum").value.split('/')[0] || "26";
+            
+            document.getElementById("outDocNumFull").innerText = document.getElementById("inDocNum").value;
+
             document.getElementById("outCenter").innerText = document.getElementById("inCenter").value;
             document.getElementById("outDayShiftNote").innerText = document.getElementById("inDayShiftNote").value;
 
