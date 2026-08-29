@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منظومة جداول المداومة العامة | All World Digital</title>
+    
+    <!-- أكواد تطبيق الهاتف PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e3a8a">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxyZWN0IHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0iIzFlM2E4YSIvPjx0ZXh0IHg9IjEyIiB5PSIxNiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2ZmZiIgZm9udC1zaXplPSI4Ij5BV0Q8L3RleHQ+PC9zdmc+">
+
     <style>
         :root {
             --primary: #1e3a8a;
@@ -391,7 +397,6 @@
             </div>
             <div class="form-group">
                 <label>رقم المراسلة:</label>
-                <!-- يتم تعبئة الرقم هنا بشكل ديناميكي بناء على التفعيل -->
                 <input type="text" id="inDocNum" value="" onchange="generateSchedule()">
             </div>
             <div class="form-group" style="grid-column: span 2;">
@@ -560,7 +565,7 @@
             </div>
             <div class="report-body-text" contenteditable="true">
                 نرفع إلى سيادتكم الموقرة هذا التقرير للتبليغ عن <strong>(غياب / تأخر)</strong> غير مبرر للموظف(ة): <strong><span id="absEmpName"></span></strong>، 
-                العامل(ة) بمصلحة: <strong><span id="absEmpDept"></span></strong>، 
+                العامل(ة) بـ: <strong><span id="absEmpDept"></span></strong>، 
                 وذلك لمدة: <strong><span id="absDuration"></span></strong>، 
                 بتاريخ: <strong><span id="absDate"></span></strong>.<br><br>
                 لذا نرجو من سيادتكم اتخاذ الإجراءات الإدارية اللازمة المعمول بها.
@@ -761,7 +766,6 @@
             document.getElementById("inSubFacility").value = licenseData.subFacility;
             document.getElementById("inCenter").value = licenseData.center;
             
-            // تحديث رقم المراسلة الافتراضي ديناميكياً مع السنة
             const currentYear = new Date().getFullYear().toString().slice(-2);
             document.getElementById("inDocNum").value = (licenseData.docPrefix || "............ /") + currentYear;
         }
@@ -1315,6 +1319,17 @@
             document.title = document.getElementById("outMainTitle").innerText.replace(/\s+/g, '_');
             printSchedule();
             document.title = originalTitle;
+        }
+
+        // ==========================================
+        // تفعيل وضع عدم الاتصال (Offline PWA)
+        // ==========================================
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(() => {
+                    console.log('SW Registration failed');
+                });
+            });
         }
 
         window.onload = function() {
