@@ -188,12 +188,13 @@
             margin-bottom: 15px; 
             color: #000; 
         }
+        /* تعديل حجم الشعار ومكانه */
         .head-logo {
             position: absolute;
             left: 0;
-            top: 0;
-            max-height: 95px;
-            max-width: 140px;
+            top: 5px;
+            max-height: 70px;
+            max-width: 100px;
             object-fit: contain;
         }
         .head-center-top { text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 15px; }
@@ -565,7 +566,7 @@
             </div>
             <div class="report-body-text" contenteditable="true">
                 نرفع إلى سيادتكم الموقرة هذا التقرير للتبليغ عن <strong>(غياب / تأخر)</strong> غير مبرر للموظف(ة): <strong><span id="absEmpName"></span></strong>، 
-                العامل(ة) بـ: <strong><span id="absEmpDept"></span></strong>، 
+                العامل(ة) بمصلحة: <strong><span id="absEmpDept"></span></strong>، 
                 وذلك لمدة: <strong><span id="absDuration"></span></strong>، 
                 بتاريخ: <strong><span id="absDate"></span></strong>.<br><br>
                 لذا نرجو من سيادتكم اتخاذ الإجراءات الإدارية اللازمة المعمول بها.
@@ -606,7 +607,7 @@
                 <div class="report-header-flex">
                     <div class="report-header-right">
                         المركز الصحي: <span id="evalCenter" contenteditable="true"></span><br>
-                        مصلحة: <span id="evalDeptName" contenteditable="true"></span>
+                        مصلحة: <span id="evalDeptName" contenteditable="true" style="border-bottom: 1px dashed #ccc; padding: 0 5px;"></span>
                     </div>
                     <div class="report-header-left">
                         إلى السيد(ة) مدير(ة)<br>
@@ -1023,6 +1024,9 @@
             saveToLocalStorage();
             renderEmployeesList();
             generateSchedule();
+            
+            // إضافة رسالة التأكيد المباشرة
+            alert(`✅ تم إضافة الموظف(ة) "${name}" بنجاح وتحديث جدول المداومة.`);
         }
 
         function deleteEmployee(index) { 
