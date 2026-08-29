@@ -134,14 +134,16 @@
         button {
             padding: 9px 16px; border: none; border-radius: 6px; font-weight: 700;
             font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            transition: 0.2s;
         }
+        button:hover { filter: brightness(0.9); }
         .btn-generate { background: #2563eb; color: #fff; }
         .btn-pdf { background: #059669; color: #fff; }
         .btn-print { background: #334155; color: #fff; }
         .btn-add { background: #10b981; color: #fff; }
         .btn-secondary { background: #475569; color: #fff; }
         .btn-delete { background: #ef4444; color: #fff; padding: 4px 8px; font-size: 11px; }
-        .btn-eval { background: var(--info); color: #fff; padding: 4px 8px; font-size: 11px; }
+        .btn-eval { background: #0284c7; color: #fff; padding: 4px 8px; font-size: 11px; }
         .btn-reset { background: #f59e0b; color: #fff; }
         .btn-report { background: #d97706; color: #fff; padding: 6px 12px; font-size: 12px; }
 
@@ -164,8 +166,8 @@
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;
         }
-        .modal-content { background: #fff; width: 95%; max-width: 550px; padding: 20px; border-radius: 12px; }
-        .modal-header { font-size: 16px; font-weight: bold; margin-bottom: 15px; color: var(--primary); border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
+        .modal-content { background: #fff; width: 95%; max-width: 500px; padding: 25px; border-radius: 12px; max-height: 95vh; overflow-y: auto; }
+        .modal-header { font-size: 18px; font-weight: bold; margin-bottom: 15px; color: var(--primary); border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; text-align: center; }
 
         /* الورقة الرسمية الثابتة */
         .sheet-wrapper { width: 100%; overflow-x: auto; padding-bottom: 20px; }
@@ -241,7 +243,7 @@
             padding: 10px 20px; 
         }
 
-        /* تنسيق الخانات القابلة للتعديل عند المرور عليها للفت الانتباه */
+        /* تنسيق الخانات القابلة للتعديل عند المرور عليها */
         td[contenteditable="true"]:hover { background-color: #fef08a; cursor: text; }
 
         @media print {
@@ -293,13 +295,13 @@
         <button class="dept-btn" onclick="switchDepartment('security')">🛡️ الحراسة والأمن</button>
     </div>
 
-    <!-- نافذة تتبع الحضور والتقييم -->
+    <!-- نافذة تتبع الحضور والتقييم (المحدثة) -->
     <div class="modal-overlay" id="evalModal">
         <div class="modal-content">
             <div class="modal-header">📋 تتبع الحضور والتقييم للموظف: <span id="evalEmpName" style="color:#d97706;"></span></div>
             
             <div class="form-group" style="margin-bottom:15px;">
-                <label>مصلحة الموظف (تظهر في تقرير الغياب):</label>
+                <label>مصلحة الموظف (تظهر في تقرير الغياب والتقييم الفردي):</label>
                 <select id="evalSubDept">
                     <option value="مصلحة طب عام">مصلحة طب عام</option>
                     <option value="مصلحة طب الاسنان">مصلحة طب الاسنان</option>
@@ -313,17 +315,16 @@
                 </select>
             </div>
 
-            <div class="grid-layout">
-                <div class="form-group">
-                    <label>أيام الغياب غير المبررة:</label>
-                    <input type="number" id="evalAbsence" min="0" value="0">
-                </div>
-                <div class="form-group">
-                    <label>ساعات التأخر اليومي (تراكمي):</label>
-                    <input type="number" id="evalDelay" min="0" value="0">
-                </div>
+            <div class="form-group" style="margin-bottom:15px;">
+                <label>أيام الغياب غير المبررة:</label>
+                <input type="number" id="evalAbsence" min="0" value="0">
             </div>
-            <div class="form-group" style="margin-top:10px;">
+            <div class="form-group" style="margin-bottom:15px;">
+                <label>ساعات التأخر اليومي (تراكمي):</label>
+                <input type="number" id="evalDelay" min="0" value="0">
+            </div>
+            
+            <div class="form-group" style="margin-bottom:15px;">
                 <label>درجة التقييم العام:</label>
                 <select id="evalRating" onchange="updateAutoRemarks()">
                     <option value="ممتاز">ممتاز</option>
@@ -333,14 +334,17 @@
                     <option value="ضعيف">ضعيف</option>
                 </select>
             </div>
-            <div class="form-group" style="margin-top:10px;">
+            <div class="form-group" style="margin-bottom:15px;">
                 <label>الملاحظات الآلية (يمكن التعديل عليها):</label>
                 <textarea id="evalRemarks" rows="3"></textarea>
             </div>
-            <div class="btn-group" style="justify-content: flex-end; margin-top: 20px;">
-                <button class="btn-report" onclick="openAbsencePreview()">📄 تقرير غياب وتأخر</button>
-                <button class="btn-add" onclick="saveEvaluationAndClose()">💾 حفظ التغييرات</button>
-                <button class="btn-secondary" onclick="closeModal()">❌ إغلاق</button>
+
+            <!-- أزرار النافذة مصطفة بشكل عمودي -->
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 25px;">
+                <button class="btn-report" style="width: 100%; padding: 12px; font-size: 14px;" onclick="openAbsencePreview()">📄 تقرير غياب وتأخر</button>
+                <button class="btn-eval" style="width: 100%; padding: 12px; font-size: 14px; background-color: #0284c7;" onclick="openIndivEvalPreview()">📊 تقرير (الأداء والمواظبة) الفردي</button>
+                <button class="btn-add" style="width: 100%; padding: 12px; font-size: 14px;" onclick="saveEvaluationAndClose()">💾 حفظ التغييرات</button>
+                <button class="btn-secondary" style="width: 100%; padding: 12px; font-size: 14px; background-color: #475569;" onclick="closeModal()">❌ إغلاق</button>
             </div>
         </div>
     </div>
@@ -469,8 +473,7 @@
             <button class="btn-generate" onclick="generateSchedule()">⚡ تحديث وحفظ الجدول</button>
             <button class="btn-pdf" onclick="exportToPdf()">📄 تصدير PDF</button>
             <button class="btn-print" onclick="printSchedule()">🖨️ طباعة جدول المصلحة</button>
-            <!-- الزر الجديد للتقييم الشامل -->
-            <button class="btn-eval" style="padding: 9px 16px; font-size: 13px;" onclick="openEvalPreview()">📊 تقرير (الأداء والمواظبة)</button>
+            <button class="btn-eval" style="padding: 9px 16px; font-size: 13px;" onclick="openEvalPreview()">📊 تقرير (الأداء والمواظبة) العام</button>
             <button class="btn-reset" onclick="resetData()">⚠️ إعادة ضبط البيانات</button>
         </div>
     </div>
@@ -526,18 +529,15 @@
 
     <!-- الوثيقة 2: تقرير التبليغ عن الغياب أو التأخر -->
     <div class="sheet-wrapper" id="printableAbsenceWrapper" style="display: none;">
-        
         <div class="no-print" style="max-width: 980px; margin: 0 auto 20px auto; padding: 15px; background: #e0f2fe; border: 2px dashed #0284c7; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; align-items: center;">
             <button class="btn-print" onclick="window.print()">🖨️ طباعة التقرير</button>
             <button class="btn-secondary" onclick="exitPreviewMode()">❌ رجوع للوحة التحكم</button>
             <div style="width: 100%; text-align: center; font-size: 12px; color: #b91c1c; font-weight: bold;">💡 يمكنك النقر على أي نص في التقرير لتعديله يدوياً قبل الطباعة</div>
         </div>
-
         <div class="sheet-container">
             <div class="official-head">
                 <img id="absLogo" class="head-logo" src="" alt="شعار المؤسسة" style="display: none;">
                 <div class="head-center-top">الجمهورية الجزائرية الديمقراطية الشعبية<br>وزارة الصحة</div>
-                
                 <div class="report-header-flex">
                     <div class="report-header-right">
                         المركز الصحي: <span id="absCenter" contenteditable="true"></span><br>
@@ -548,12 +548,10 @@
                         <span id="absFacility" contenteditable="true"></span>
                     </div>
                 </div>
-                
                 <div class="head-title-block" style="margin-top: 30px;">
                     <div class="main-title">تقرير تبليغ عن (غياب / تأخر) غير مبرر</div>
                 </div>
             </div>
-
             <div class="report-body-text" contenteditable="true">
                 نرفع إلى سيادتكم الموقرة هذا التقرير للتبليغ عن <strong>(غياب / تأخر)</strong> غير مبرر للموظف(ة): <strong><span id="absEmpName"></span></strong>، 
                 العامل(ة) بـ: <strong><span id="absEmpDept"></span></strong>، 
@@ -561,7 +559,6 @@
                 بتاريخ: <strong><span id="absDate"></span></strong>.<br><br>
                 لذا نرجو من سيادتكم اتخاذ الإجراءات الإدارية اللازمة المعمول بها.
             </div>
-
             <div class="signatures-area" style="margin-top: 80px; justify-content: flex-end; padding-left: 40px; padding-right: 0;">
                 <div style="text-align: left; width: 100%;">إمضاء رئيس المصلحة</div>
             </div>
@@ -571,7 +568,6 @@
 
     <!-- الوثيقة 3: تقرير جدول التقييم الشامل للمصلحة -->
     <div class="sheet-wrapper" id="printableEvalWrapper" style="display: none;">
-        
         <div class="no-print" style="max-width: 980px; margin: 0 auto 20px auto; padding: 15px; background: #e0f2fe; border: 2px dashed #0284c7; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; align-items: center;">
             <label style="font-weight: bold; color: #1e3a8a;">تعيين المصلحة في أعلى التقرير:</label>
             <select id="evalPreviewDeptSelect" onchange="document.getElementById('evalDeptName').innerText = this.value" style="padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: bold; outline: none;">
@@ -590,12 +586,10 @@
             <button class="btn-secondary" onclick="exitPreviewMode()">❌ رجوع للوحة التحكم</button>
             <div style="width: 100%; text-align: center; font-size: 12px; color: #b91c1c; font-weight: bold;">💡 يمكنك النقر على أي خانة في الجدول أسفله لتعديل التقييم والملاحظات لكل موظف يدوياً قبل الطباعة</div>
         </div>
-
         <div class="sheet-container">
             <div class="official-head">
                 <img id="evalLogo" class="head-logo" src="" alt="شعار المؤسسة" style="display: none;">
                 <div class="head-center-top">الجمهورية الجزائرية الديمقراطية الشعبية<br>وزارة الصحة</div>
-                
                 <div class="report-header-flex">
                     <div class="report-header-right">
                         المركز الصحي: <span id="evalCenter" contenteditable="true"></span><br>
@@ -606,12 +600,10 @@
                         <span id="evalFacility" contenteditable="true"></span>
                     </div>
                 </div>
-                
                 <div class="head-title-block" style="margin-top: 20px;">
                     <div class="main-title">جدول تقييم (الأداء والمواظبة)</div>
                 </div>
             </div>
-
             <table class="report-grid">
                 <thead>
                     <tr>
@@ -624,11 +616,53 @@
                 </thead>
                 <tbody id="evalTableBody"></tbody>
             </table>
-
             <div class="signatures-area" style="margin-top: 60px; justify-content: flex-end; padding-left: 40px; padding-right: 0;">
                 <div style="text-align: left; width: 100%;">إمضاء رئيس المصلحة</div>
             </div>
             <div class="credits" style="margin-top: 40px;">من تصميم All World Digital</div>
+        </div>
+    </div>
+
+    <!-- الوثيقة 4: تقرير التقييم الفردي للموظف -->
+    <div class="sheet-wrapper" id="printableIndivEvalWrapper" style="display: none;">
+        <div class="no-print" style="max-width: 980px; margin: 0 auto 20px auto; padding: 15px; background: #e0f2fe; border: 2px dashed #0284c7; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; align-items: center;">
+            <button class="btn-print" onclick="window.print()">🖨️ طباعة التقرير</button>
+            <button class="btn-secondary" onclick="exitPreviewMode()">❌ رجوع للوحة التحكم</button>
+            <div style="width: 100%; text-align: center; font-size: 12px; color: #b91c1c; font-weight: bold;">💡 يمكنك النقر لتعديل أي نص يدوياً قبل الطباعة</div>
+        </div>
+        <div class="sheet-container">
+            <div class="official-head">
+                <img id="indivEvalLogo" class="head-logo" src="" alt="شعار المؤسسة" style="display: none;">
+                <div class="head-center-top">الجمهورية الجزائرية الديمقراطية الشعبية<br>وزارة الصحة</div>
+                <div class="report-header-flex">
+                    <div class="report-header-right">
+                        المركز الصحي: <span id="indivEvalCenter" contenteditable="true"></span><br>
+                        مصلحة: <span id="indivEvalDept" contenteditable="true"></span>
+                    </div>
+                    <div class="report-header-left">
+                        إلى السيد(ة) مدير(ة)<br>
+                        <span id="indivEvalFacility" contenteditable="true"></span>
+                    </div>
+                </div>
+                <div class="head-title-block" style="margin-top: 20px;">
+                    <div class="main-title">تقرير تقييم (الأداء والمواظبة) الفردي</div>
+                </div>
+            </div>
+            
+            <table class="report-grid">
+                <tr><th style="width: 35%;">الاسم واللقب</th><td id="indivEvalName" contenteditable="true" style="font-weight: 900; font-size: 18px;"></td></tr>
+                <tr><th>الغياب غير المبرر (أيام)</th><td id="indivEvalAbsence" contenteditable="true"></td></tr>
+                <tr><th>التأخر عن العمل (ساعات)</th><td id="indivEvalDelay" contenteditable="true"></td></tr>
+                <tr><th>درجة التقييم العام</th><td id="indivEvalRating" contenteditable="true"></td></tr>
+                <tr><th>الملاحظات الإدارية</th><td id="indivEvalRemarks" contenteditable="true" style="text-align: right; line-height: 1.8;"></td></tr>
+            </table>
+
+            <div class="signatures-area" style="margin-top: 80px;">
+                <div>إمضاء المعني</div>
+                <div>رئيس المصلحة</div>
+                <div>مدير المؤسسة</div>
+            </div>
+            <div class="credits" style="margin-top: 60px;">من تصميم All World Digital</div>
         </div>
     </div>
 
@@ -661,6 +695,10 @@
             const evalLogo = document.getElementById('evalLogo');
             evalLogo.src = logoDataUrl;
             evalLogo.style.display = 'block';
+
+            const indivEvalLogo = document.getElementById('indivEvalLogo');
+            indivEvalLogo.src = logoDataUrl;
+            indivEvalLogo.style.display = 'block';
         }
 
         // ==========================================
@@ -867,6 +905,7 @@
                 document.getElementById('outLogo').style.display = 'none';
                 document.getElementById('absLogo').style.display = 'none';
                 document.getElementById('evalLogo').style.display = 'none';
+                document.getElementById('indivEvalLogo').style.display = 'none';
                 loadSavedData();
             }
         }
@@ -1003,7 +1042,7 @@
             generateSchedule(); 
         }
 
-        // نافذة الحضور والتقييم
+        // نافذة الحضور والتقييم الفردي (Modal)
         function openModal(index) {
             currentEditIndex = index;
             const emp = departmentsData[currentDept].employees[index];
@@ -1044,6 +1083,7 @@
             document.getElementById("printableScheduleWrapper").style.display = "none";
             document.getElementById("printableAbsenceWrapper").style.display = "none";
             document.getElementById("printableEvalWrapper").style.display = "none";
+            document.getElementById("printableIndivEvalWrapper").style.display = "none";
         }
 
         function exitPreviewMode() {
@@ -1066,13 +1106,9 @@
             emp.remarks = document.getElementById("evalRemarks").value;
             saveToLocalStorage();
 
-            // إزالة كلمة المركز الصحي من البداية لمنع التكرار
             let centerText = document.getElementById("inCenter").value.replace(/^(ب?المركز الصحي\s*)/, '');
             document.getElementById("absCenter").innerText = centerText;
-            
-            // قراءة سنة التقرير
             document.getElementById("absYear").innerText = document.getElementById("selectedMonth").value.split("-")[0];
-            
             document.getElementById("absFacility").innerText = document.getElementById("inSubFacility").value;
 
             document.getElementById("absEmpName").innerText = emp.name;
@@ -1081,7 +1117,6 @@
             let durList = [];
             if(emp.absence > 0) { durList.push(emp.absence + " يوم/أيام"); }
             if(emp.delay > 0) { durList.push(emp.delay + " ساعة/ساعات"); }
-            
             document.getElementById("absDuration").innerText = durList.length > 0 ? durList.join(" و ") : "___";
             
             let d = document.getElementById("reportDate").value;
@@ -1095,16 +1130,45 @@
             window.scrollTo(0,0);
         }
 
-        // فتح معاينة جدول التقييم الشامل (مع خلايا قابلة للتعديل)
+        // فتح معاينة التقييم الفردي للموظف
+        function openIndivEvalPreview() {
+            if (currentEditIndex === -1) return;
+            
+            const emp = departmentsData[currentDept].employees[currentEditIndex];
+            emp.subDept = document.getElementById("evalSubDept").value;
+            emp.absence = document.getElementById("evalAbsence").value;
+            emp.delay = document.getElementById("evalDelay").value;
+            emp.rating = document.getElementById("evalRating").value;
+            emp.remarks = document.getElementById("evalRemarks").value;
+            saveToLocalStorage();
+
+            let centerText = document.getElementById("inCenter").value.replace(/^(ب?المركز الصحي\s*)/, '');
+            document.getElementById("indivEvalCenter").innerText = centerText;
+            document.getElementById("indivEvalFacility").innerText = document.getElementById("inSubFacility").value;
+            document.getElementById("indivEvalDept").innerText = emp.subDept || "مصلحة العلاج العام";
+
+            document.getElementById("indivEvalName").innerText = emp.name;
+            document.getElementById("indivEvalAbsence").innerText = emp.absence || 0;
+            document.getElementById("indivEvalDelay").innerText = emp.delay || 0;
+            document.getElementById("indivEvalRating").innerText = emp.rating || "ممتاز";
+            document.getElementById("indivEvalRemarks").innerText = emp.remarks || "لا توجد ملاحظات";
+
+            document.getElementById("departmentsBar").style.display = "none";
+            document.getElementById("adminPanel").style.display = "none";
+            hideAllWrappers();
+            document.getElementById("printableIndivEvalWrapper").style.display = "block";
+            closeModal();
+            window.scrollTo(0,0);
+        }
+
+        // فتح معاينة جدول التقييم الشامل للمصلحة (مع خلايا قابلة للتعديل)
         function openEvalPreview() {
             let centerText = document.getElementById("inCenter").value.replace(/^(ب?المركز الصحي\s*)/, '');
             document.getElementById("evalCenter").innerText = centerText;
             
-            // ضبط القائمة المنسدلة للعنوان تلقائياً حسب المصلحة الحالية
             const deptLabel = departmentsData[currentDept].label;
             const selectElem = document.getElementById("evalPreviewDeptSelect");
             
-            // التأكد من وجود الخيار في القائمة المنسدلة
             let optionExists = Array.from(selectElem.options).some(opt => opt.value === deptLabel);
             if(!optionExists) {
                 let newOption = new Option(deptLabel, deptLabel);
@@ -1118,7 +1182,6 @@
             const tbody = document.getElementById("evalTableBody");
             tbody.innerHTML = "";
             departmentsData[currentDept].employees.forEach(emp => {
-                // اضافة contenteditable للسماح بالتعديل اليدوي قبل الطباعة
                 tbody.innerHTML += `
                     <tr>
                         <td contenteditable="true">${emp.name}</td>
@@ -1136,15 +1199,6 @@
             document.getElementById("printableEvalWrapper").style.display = "block";
             if (currentEditIndex > -1) closeModal();
             window.scrollTo(0,0);
-        }
-
-        function isPersonOnVacation(personName, dateStr) {
-            const person = departmentsData[currentDept].employees.find(e => e.name === personName);
-            if (!person || !person.isVacation || !person.vStart) return false;
-            const curDate = dateStr;
-            const startDate = person.vStart;
-            const endDate = person.vEnd ? person.vEnd : "2099-12-31";
-            return curDate >= startDate && curDate <= endDate;
         }
 
         // توليد الجدول الخاص بالمصلحة الحالية للطباعة
@@ -1243,6 +1297,15 @@
                 tr.innerHTML = rowHTML;
                 tbody.appendChild(tr);
             }
+        }
+
+        function isPersonOnVacation(personName, dateStr) {
+            const person = departmentsData[currentDept].employees.find(e => e.name === personName);
+            if (!person || !person.isVacation || !person.vStart) return false;
+            const curDate = dateStr;
+            const startDate = person.vStart;
+            const endDate = person.vEnd ? person.vEnd : "2099-12-31";
+            return curDate >= startDate && curDate <= endDate;
         }
 
         function printSchedule() {
