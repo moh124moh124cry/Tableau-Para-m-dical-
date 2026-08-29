@@ -36,24 +36,29 @@
         /* نظام الإشعارات الذكي (Toast) */
         #toastMessage {
             position: fixed;
-            bottom: -100px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             background-color: #10b981;
             color: white;
-            padding: 12px 25px;
+            padding: 14px 28px;
             border-radius: 8px;
             font-size: 15px;
             font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 99999;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 999999;
+            transition: all 0.4s ease;
             opacity: 0;
+            visibility: hidden;
             pointer-events: none;
+            text-align: center;
+            width: max-content;
+            max-width: 90%;
         }
         #toastMessage.show {
-            bottom: 30px;
+            bottom: 40px;
             opacity: 1;
+            visibility: visible;
         }
 
         /* شريط التبويبات العلوي للمصالح */
@@ -211,13 +216,13 @@
             margin-bottom: 15px; 
             color: #000; 
         }
-        /* تصغير حجم اللوغو ليصبح مقبولاً */
+        /* تصغير حجم اللوغو ليصبح متناسق جداً */
         .head-logo {
             position: absolute;
             left: 0;
-            top: 0;
-            max-height: 80px; 
-            max-width: 110px;
+            top: 5px;
+            max-height: 65px !important; 
+            max-width: 90px !important;
             object-fit: contain;
         }
         .head-center-top { text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 15px; }
@@ -278,7 +283,7 @@
 
         @media print {
             body { background: #fff; padding: 0; margin: 0; }
-            .no-print, .modal-overlay, #activationScreen, .departments-bar { display: none !important; }
+            .no-print, .modal-overlay, #activationScreen, .departments-bar, #toastMessage { display: none !important; }
             .sheet-wrapper { overflow: visible; padding: 0; }
             .sheet-container { box-shadow: none; padding: 0; width: 100%; min-width: 100%; max-width: 100%; margin: 0; }
             @page { size: A4 portrait; margin: 10mm; }
@@ -298,7 +303,7 @@
 </head>
 <body>
 
-    <!-- الإشعار الذكي المنبثق -->
+    <!-- رسالة الإشعار الذكية -->
     <div id="toastMessage"></div>
 
     <!-- شاشة التفعيل والحماية -->
@@ -633,7 +638,7 @@
                 <div class="report-header-flex">
                     <div class="report-header-right">
                         المركز الصحي: <span id="evalCenter" contenteditable="true"></span><br>
-                        مصلحة: <span id="evalDeptName" contenteditable="true"></span>
+                        مصلحة: <span id="evalDeptName" contenteditable="true" style="border-bottom: 1px dashed #ccc; padding: 0 5px;"></span>
                     </div>
                     <div class="report-header-left">
                         إلى السيد(ة) مدير(ة)<br>
@@ -710,6 +715,7 @@
         // ==========================================
         function showToast(message) {
             const toast = document.getElementById('toastMessage');
+            if(!toast) return;
             toast.innerText = message;
             toast.classList.add('show');
             setTimeout(() => {
@@ -1370,17 +1376,6 @@
             document.title = document.getElementById("outMainTitle").innerText.replace(/\s+/g, '_');
             printSchedule();
             document.title = originalTitle;
-        }
-
-        // ==========================================
-        // تفعيل وضع عدم الاتصال (Offline PWA)
-        // ==========================================
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').catch(() => {
-                    console.log('SW Registration failed');
-                });
-            });
         }
 
         window.onload = function() {
