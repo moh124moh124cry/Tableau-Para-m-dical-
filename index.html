@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منظومة جداول المداومة العامة | All World Digital</title>
     
-    <!-- أكواد تطبيق الهاتف PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1e3a8a">
     <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxyZWN0IHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0iIzFlM2E4YSIvPjx0ZXh0IHg9IjEyIiB5PSIxNiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2ZmZiIgZm9udC1zaXplPSI4Ij5BV0Q8L3RleHQ+PC9zdmc+">
@@ -31,6 +30,30 @@
             background-color: #f1f5f9;
             color: #0f172a;
             padding: 12px;
+        }
+
+        /* نظام الإشعارات الذكي */
+        #toastMessage {
+            position: fixed;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #10b981;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 10000;
+            opacity: 0;
+            transition: all 0.4s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        #toastMessage.show {
+            bottom: 30px;
+            opacity: 1;
         }
 
         /* شريط التبويبات العلوي للمصالح */
@@ -188,13 +211,12 @@
             margin-bottom: 15px; 
             color: #000; 
         }
-        /* تعديل حجم الشعار ومكانه */
         .head-logo {
             position: absolute;
             left: 0;
-            top: 5px;
-            max-height: 70px;
-            max-width: 100px;
+            top: 0;
+            max-height: 95px;
+            max-width: 140px;
             object-fit: contain;
         }
         .head-center-top { text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 15px; }
@@ -275,6 +297,9 @@
 </head>
 <body>
 
+    <!-- رسالة الإشعار الذكية -->
+    <div id="toastMessage"></div>
+
     <!-- شاشة التفعيل والحماية -->
     <div id="activationScreen">
         <div class="activation-box">
@@ -304,7 +329,7 @@
         <button class="dept-btn" onclick="switchDepartment('patrols')">🚑 الدوريات الطبية</button>
     </div>
 
-    <!-- نافذة تتبع الحضور والتقييم (المحدثة) -->
+    <!-- نافذة تتبع الحضور والتقييم -->
     <div class="modal-overlay" id="evalModal">
         <div class="modal-content">
             <div class="modal-header">📋 تتبع الحضور والتقييم للموظف: <span id="evalEmpName" style="color:#d97706;"></span></div>
@@ -482,7 +507,8 @@
         </div>
 
         <div class="btn-group">
-            <button class="btn-generate" onclick="generateSchedule()">⚡ تحديث وحفظ الجدول</button>
+            <!-- تغيير هنا لدعم الإشعار الذكي -->
+            <button class="btn-generate" onclick="updateScheduleWithToast()">⚡ تحديث وحفظ الجدول</button>
             <button class="btn-pdf" onclick="exportToPdf()">📄 تصدير PDF</button>
             <button class="btn-print" onclick="printSchedule()">🖨️ طباعة جدول المصلحة</button>
             <button class="btn-eval" style="padding: 9px 16px; font-size: 13px;" onclick="openEvalPreview()">📊 تقرير (الأداء والمواظبة) العام</button>
@@ -680,6 +706,18 @@
 
     <script>
         // ==========================================
+        // وظيفة الإشعارات المنبثقة الذكية (Toast)
+        // ==========================================
+        function showToast(message) {
+            const toast = document.getElementById('toastMessage');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ==========================================
         // وظيفة حفظ واسترجاع الشعار (Logo)
         // ==========================================
         function handleLogoUpload(event) {
@@ -690,6 +728,7 @@
                     const logoDataUrl = e.target.result;
                     applyLogo(logoDataUrl);
                     localStorage.setItem('app_saved_logo', logoDataUrl);
+                    showToast("✅ تم حفظ الشعار بنجاح!");
                 };
                 reader.readAsDataURL(file);
             }
@@ -1025,8 +1064,8 @@
             renderEmployeesList();
             generateSchedule();
             
-            // إضافة رسالة التأكيد المباشرة
-            alert(`✅ تم إضافة الموظف(ة) "${name}" بنجاح وتحديث جدول المداومة.`);
+            // إظهار إشعار التأكيد
+            showToast(`✅ تم إضافة الموظف(ة) "${name}" بنجاح!`);
         }
 
         function deleteEmployee(index) { 
@@ -1034,6 +1073,7 @@
             saveToLocalStorage();
             renderEmployeesList(); 
             generateSchedule(); 
+            showToast("🗑️ تم حذف الموظف بنجاح!");
         }
 
         // نافذة الحضور والتقييم الفردي (Modal)
@@ -1070,6 +1110,7 @@
                 saveToLocalStorage();
                 renderEmployeesList();
                 closeModal();
+                showToast("💾 تم حفظ التقييم بنجاح!");
             }
         }
 
@@ -1159,7 +1200,7 @@
             window.scrollTo(0,0);
         }
 
-        // فتح معاينة جدول التقييم الشامل للمصلحة (مع خلايا قابلة للتعديل)
+        // فتح معاينة جدول التقييم الشامل للمصلحة
         function openEvalPreview() {
             let centerText = document.getElementById("inCenter").value.replace(/^(ب?المركز الصحي\s*)/, '');
             document.getElementById("evalCenter").innerText = centerText;
@@ -1199,6 +1240,12 @@
             document.getElementById("printableEvalWrapper").style.display = "block";
             if (currentEditIndex > -1) closeModal();
             window.scrollTo(0,0);
+        }
+
+        // تحديث وإظهار إشعار ذكي لجدول المداومة
+        function updateScheduleWithToast() {
+            generateSchedule();
+            showToast("⚡ تم تحديث وحفظ جدول المداومة بنجاح!");
         }
 
         // توليد الجدول الخاص بالمصلحة الحالية للطباعة
