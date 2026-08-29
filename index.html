@@ -284,15 +284,17 @@
 
     <!-- شريط التبديل بين المصالح والأسلاك -->
     <div class="departments-bar no-print" id="departmentsBar">
-        <button class="dept-btn active" onclick="switchDepartment('paramedical')">🩺 مصلحة الشبه طبي</button>
-        <button class="dept-btn" onclick="switchDepartment('doctors')">👨‍⚕️ مصلحة طب عام</button>
-        <button class="dept-btn" onclick="switchDepartment('dental')">🦷 مصلحة طب الأسنان</button>
-        <button class="dept-btn" onclick="switchDepartment('lab')">🔬 مصلحة المخبر</button>
-        <button class="dept-btn" onclick="switchDepartment('radio')">🩻 مصلحة الأشعة</button>
-        <button class="dept-btn" onclick="switchDepartment('receipts')">💳 مصلحة الإيرادات</button>
-        <button class="dept-btn" onclick="switchDepartment('patrols')">🚑 الدوريات الطبية</button>
-        <button class="dept-btn" onclick="switchDepartment('ambulance')">🚐 سائقي الإسعاف</button>
+        <button class="dept-btn active" onclick="switchDepartment('paramedical')">🩺 الشبه طبي (العلاج العام)</button>
+        <button class="dept-btn" onclick="switchDepartment('doctors')">👨‍⚕️ طب العام</button>
+        <button class="dept-btn" onclick="switchDepartment('dental')">🦷 طب الاسنان</button>
+        <button class="dept-btn" onclick="switchDepartment('lab')">🔬 المخبر</button>
+        <button class="dept-btn" onclick="switchDepartment('radio')">🩻 الأشعة</button>
+        <button class="dept-btn" onclick="switchDepartment('maternity')">🤰 الأمومة</button>
+        <button class="dept-btn" onclick="switchDepartment('receipts')">💳 الايرادات</button>
+        <button class="dept-btn" onclick="switchDepartment('digital')">💻 الرقمنة</button>
+        <button class="dept-btn" onclick="switchDepartment('ambulance')">🚐 سائقي سيارات الإسعاف</button>
         <button class="dept-btn" onclick="switchDepartment('security')">🛡️ الحراسة والأمن</button>
+        <button class="dept-btn" onclick="switchDepartment('patrols')">🚑 الدوريات الطبية</button>
     </div>
 
     <!-- نافذة تتبع الحضور والتقييم (المحدثة) -->
@@ -303,15 +305,18 @@
             <div class="form-group" style="margin-bottom:15px;">
                 <label>مصلحة الموظف (تظهر في تقرير الغياب والتقييم الفردي):</label>
                 <select id="evalSubDept">
-                    <option value="مصلحة طب عام">مصلحة طب عام</option>
-                    <option value="مصلحة طب الاسنان">مصلحة طب الاسنان</option>
-                    <option value="مصلحة المخبر">مصلحة المخبر</option>
-                    <option value="مصلحة الأشعة">مصلحة الأشعة</option>
-                    <option value="مصلحة العلاج العام">مصلحة العلاج العام</option>
-                    <option value="مصلحة الأمومة">مصلحة الأمومة</option>
-                    <option value="مصلحة الايرادات">مصلحة الايرادات</option>
-                    <option value="مصلحة الرقمنة">مصلحة الرقمنة</option>
-                    <option value="مصلحة مكتب الدخول">مصلحة مكتب الدخول</option>
+                    <option value="طب العام">طب العام</option>
+                    <option value="طب الاسنان">طب الاسنان</option>
+                    <option value="الشبه طبي (العلاج العام)">الشبه طبي (العلاج العام)</option>
+                    <option value="المخبر">المخبر</option>
+                    <option value="الأشعة">الأشعة</option>
+                    <option value="الأمومة">الأمومة</option>
+                    <option value="الايرادات">الايرادات</option>
+                    <option value="الرقمنة">الرقمنة</option>
+                    <option value="مكتب الدخول">مكتب الدخول</option>
+                    <option value="سائقي سيارات الإسعاف">سائقي سيارات الإسعاف</option>
+                    <option value="الحراسة والأمن">الحراسة والأمن</option>
+                    <option value="الدوريات الطبية">الدوريات الطبية</option>
                 </select>
             </div>
 
@@ -353,7 +358,7 @@
     <div class="no-print" id="adminPanel">
         <div class="section-title">
             <span>⚙️ إعدادات: </span>
-            <span id="currentDeptTitleBadge" style="color:#d97706; margin-right:5px;">جدول المداومة الشبه طبية</span>
+            <span id="currentDeptTitleBadge" style="color:#d97706; margin-right:5px;">جدول المداومة - الشبه طبي (العلاج العام)</span>
         </div>
         
         <div class="grid-layout" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e1; margin-bottom: 15px;">
@@ -412,7 +417,7 @@
 
         <!-- إدارة موظفي المصلحة המحددة -->
         <div class="staff-management">
-            <div class="section-title">👥 إدارة طاقم <span id="staffDeptNameLabel">مصلحة الشبه طبي</span></div>
+            <div class="section-title">👥 إدارة طاقم <span id="staffDeptNameLabel">الشبه طبي (العلاج العام)</span></div>
             <div class="grid-layout">
                 <div class="form-group">
                     <label>اسم الموظف / العون:</label>
@@ -554,7 +559,7 @@
             </div>
             <div class="report-body-text" contenteditable="true">
                 نرفع إلى سيادتكم الموقرة هذا التقرير للتبليغ عن <strong>(غياب / تأخر)</strong> غير مبرر للموظف(ة): <strong><span id="absEmpName"></span></strong>، 
-                العامل(ة) بـ: <strong><span id="absEmpDept"></span></strong>، 
+                العامل(ة) بمصلحة: <strong><span id="absEmpDept"></span></strong>، 
                 وذلك لمدة: <strong><span id="absDuration"></span></strong>، 
                 بتاريخ: <strong><span id="absDate"></span></strong>.<br><br>
                 لذا نرجو من سيادتكم اتخاذ الإجراءات الإدارية اللازمة المعمول بها.
@@ -571,15 +576,18 @@
         <div class="no-print" style="max-width: 980px; margin: 0 auto 20px auto; padding: 15px; background: #e0f2fe; border: 2px dashed #0284c7; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; align-items: center;">
             <label style="font-weight: bold; color: #1e3a8a;">تعيين المصلحة في أعلى التقرير:</label>
             <select id="evalPreviewDeptSelect" onchange="document.getElementById('evalDeptName').innerText = this.value" style="padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: bold; outline: none;">
-                <option value="مصلحة طب عام">مصلحة طب عام</option>
-                <option value="مصلحة طب الاسنان">مصلحة طب الاسنان</option>
-                <option value="مصلحة المخبر">مصلحة المخبر</option>
-                <option value="مصلحة الأشعة">مصلحة الأشعة</option>
-                <option value="مصلحة العلاج العام">مصلحة العلاج العام</option>
-                <option value="مصلحة الأمومة">مصلحة الأمومة</option>
-                <option value="مصلحة الايرادات">مصلحة الايرادات</option>
-                <option value="مصلحة الرقمنة">مصلحة الرقمنة</option>
-                <option value="مصلحة مكتب الدخول">مصلحة مكتب الدخول</option>
+                <option value="طب العام">طب العام</option>
+                <option value="طب الاسنان">طب الاسنان</option>
+                <option value="الشبه طبي (العلاج العام)">الشبه طبي (العلاج العام)</option>
+                <option value="المخبر">المخبر</option>
+                <option value="الأشعة">الأشعة</option>
+                <option value="الأمومة">الأمومة</option>
+                <option value="الايرادات">الايرادات</option>
+                <option value="الرقمنة">الرقمنة</option>
+                <option value="مكتب الدخول">مكتب الدخول</option>
+                <option value="سائقي سيارات الإسعاف">سائقي سيارات الإسعاف</option>
+                <option value="الحراسة والأمن">الحراسة والأمن</option>
+                <option value="الدوريات الطبية">الدوريات الطبية</option>
             </select>
             <button class="btn-print" onclick="window.print()">🖨️ طباعة التقرير</button>
             <button class="btn-secondary" onclick="exitPreviewMode()">❌ رجوع للوحة التحكم</button>
@@ -592,7 +600,7 @@
                 <div class="report-header-flex">
                     <div class="report-header-right">
                         المركز الصحي: <span id="evalCenter" contenteditable="true"></span><br>
-                        مصلحة: <span id="evalDeptName" contenteditable="true" style="border-bottom: 1px dashed #ccc; padding: 0 5px;"></span>
+                        مصلحة: <span id="evalDeptName" contenteditable="true"></span>
                     </div>
                     <div class="report-header-left">
                         إلى السيد(ة) مدير(ة)<br>
@@ -656,7 +664,7 @@
                 <tr><th>الملاحظات الإدارية</th><td id="indivEvalRemarks" contenteditable="true" style="text-align: right; line-height: 1.8;"></td></tr>
             </table>
 
-            <div class="signatures-area" style="margin-top: 80px; justify-content: flex-end; padding-left: 40px; padding-right: 0;">
+            <div class="signatures-area" style="margin-top: 60px; justify-content: flex-end; padding-left: 40px; padding-right: 0;">
                 <div style="text-align: left; width: 100%;">إمضاء رئيس المصلحة</div>
             </div>
             <div class="credits" style="margin-top: 60px;">من تصميم All World Digital</div>
@@ -746,7 +754,7 @@
         }
 
         // ==========================================
-        // قاعدة البيانات الافتراضية
+        // قاعدة البيانات الافتراضية والتسميات الجديدة
         // ==========================================
         const defaultRemarks = {
             "ممتاز": "أداء متميز وانضباط عالي في العمل والمناوبات. يوصى بالتشجيع.",
@@ -758,87 +766,48 @@
 
         const defaultDepartmentsData = {
             paramedical: {
-                title: "جدول المداومة الشبه الطبية", label: "مصلحة الشبه طبي", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
-                employees: [
-                    { name: "حمان ف", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "عيساوي ر", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "خليفي ع", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "بن عاشور ر", type: "evening", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "لزرق س", type: "evening", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "ثليجي ن", type: "morning", isVacation: true, vStart: "2026-08-10", vEnd: "2026-08-31", absence: 0, delay: 0, rating: "جيد جداً", remarks: "عطلة سنوية" },
-                    { name: "حمان ع", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "بوعامر م", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "سحنون ع غ", type: "night", isVacation: true, vStart: "2026-08-20", vEnd: "2026-09-11", absence: 0, delay: 0, rating: "ممتاز", remarks: "عطلة سنوية" },
-                    { name: "سايح ن", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
-                ],
-                teams: [{ name: "الفرقة الأولى (أ)", m1: "حمان ف", m2: "عيساوي ر", m3: "خليفي ع" }, { name: "الفرقة الثانية (ب)", m1: "بن عاشور ر", m2: "ثليجي ن", m3: "" }, { name: "الفرقة الثالثة (ج)", m1: "لزرق س", m2: "خليفي ع", m3: "" }]
+                title: "جدول المداومة - الشبه طبي (العلاج العام)", label: "الشبه طبي (العلاج العام)", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
+                employees: [], teams: []
             },
             doctors: {
-                title: "جدول مداومة الأطباء العامين", label: "مصلحة طب عام", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
-                employees: [
-                    { name: "د. بلقاسم م", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "د. قدور ع", type: "evening", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "د. طيبي س", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "د. منصوري ف", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
-                ],
-                teams: [{ name: "فرقة الأطباء 1", m1: "د. بلقاسم م", m2: "د. قدور ع", m3: "" }]
+                title: "جدول المداومة - طب العام", label: "طب العام", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
+                employees: [], teams: []
             },
             dental: {
-                title: "جدول مداومة مصلحة جراحة الأسنان", label: "مصلحة طب الأسنان", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "المداومة والاستعجالات" },
-                employees: [
-                    { name: "د. بوزيان", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "ناصري خ", type: "evening", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
-                ],
-                teams: [{ name: "عيادة الأسنان", m1: "د. بوزيان", m2: "ناصري خ", m3: "" }]
+                title: "جدول المداومة - طب الاسنان", label: "طب الاسنان", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "المداومة والاستعجالات" },
+                employees: [], teams: []
             },
             lab: {
-                title: "جدول مداومة مصلحة المخبر والتحاليل", label: "مصلحة المخبر", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
-                employees: [
-                    { name: "العربي ط", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "زيان م", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
-                ],
-                teams: [{ name: "طاقم المخبر أ", m1: "العربي ط", m2: "", m3: "" }]
+                title: "جدول المداومة - المخبر", label: "المخبر", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
+                employees: [], teams: []
             },
             radio: {
-                title: "جدول مداومة مصلحة الأشعة", label: "مصلحة الأشعة", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
-                employees: [
-                    { name: "مرابط ح", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "علالي ي", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
-                ],
-                teams: [{ name: "فريق الأشعة", m1: "مرابط ح", m2: "", m3: "" }]
+                title: "جدول المداومة - الأشعة", label: "الأشعة", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
+                employees: [], teams: []
+            },
+            maternity: {
+                title: "جدول المداومة - الأمومة", label: "الأمومة", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
+                employees: [], teams: []
             },
             receipts: {
-                title: "جدول مداومة مكتب الإيرادات والتحصيل", label: "مصلحة الإيرادات", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
-                employees: [
-                    { name: "فلاحي ع", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "سماتي ر", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
-                ],
-                teams: [{ name: "مكتب الإيرادات", m1: "فلاحي ع", m2: "", m3: "" }]
+                title: "جدول المداومة - الايرادات", label: "الايرادات", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
+                employees: [], teams: []
+            },
+            digital: {
+                title: "جدول المداومة - الرقمنة", label: "الرقمنة", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
+                employees: [], teams: []
+            },
+            ambulance: {
+                title: "جدول المداومة - سائقي سيارات الإسعاف", label: "سائقي سيارات الإسعاف", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
+                employees: [], teams: []
+            },
+            security: {
+                title: "جدول المداومة - الحراسة والأمن", label: "الحراسة والأمن", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
+                employees: [], teams: []
             },
             patrols: {
                 title: "جدول الدوريات والخرجات الطبية", label: "الدوريات الطبية", shifts: { s1: "دورية الصباح (08-12)", s2: "دورية المساء (13-16)", s3: "فريق الإسناد والتدخل" },
-                employees: [
-                    { name: "د. رحماني ك", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "عثماني أ", type: "evening", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "بوزيد س", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
-                ],
-                teams: [{ name: "طاقم الدورية الريفية", m1: "د. رحماني ك", m2: "عثماني أ", m3: "بوزيد س" }]
-            },
-            ambulance: {
-                title: "جدول مداومة سائقي سيارة الإسعاف", label: "سائقي الإسعاف", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
-                employees: [
-                    { name: "بوعمامة ع", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "لخضر م", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
-                ],
-                teams: [{ name: "فريق الإسعاف 1", m1: "بوعمامة ع", m2: "", m3: "" }]
-            },
-            security: {
-                title: "جدول مداومة الحراسة والأمن", label: "الحراسة والأمن", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
-                employees: [
-                    { name: "بن علي ك", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "تواتي س", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
-                ],
-                teams: [{ name: "فريق الحراسة 1", m1: "بن علي ك", m2: "", m3: "" }]
+                employees: [], teams: []
             }
         };
 
@@ -865,7 +834,15 @@
         function loadSavedData() {
             const savedData = localStorage.getItem('app_departments_data');
             if (savedData) {
-                departmentsData = JSON.parse(savedData);
+                // ندمج البيانات المحفوظة مع الهيكل الافتراضي لضمان إضافة المصالح الجديدة (الأمومة والرقمنة)
+                let parsed = JSON.parse(savedData);
+                departmentsData = JSON.parse(JSON.stringify(defaultDepartmentsData));
+                for (let key in parsed) {
+                    if (departmentsData[key]) {
+                        departmentsData[key].employees = parsed[key].employees || [];
+                        departmentsData[key].teams = parsed[key].teams || [];
+                    }
+                }
                 for (let dept in departmentsData) {
                     departmentsData[dept].employees.forEach(emp => {
                         if (emp.type === "day") emp.type = "morning";
@@ -1045,7 +1022,10 @@
             const emp = departmentsData[currentDept].employees[index];
             document.getElementById("evalEmpName").innerText = emp.name;
             
-            document.getElementById("evalSubDept").value = emp.subDept || departmentsData[currentDept].label;
+            // التأكد من أن القيمة المختارة موجودة، إن لم تكن نعرض مصلحة الموظف الأساسية
+            let savedDept = emp.subDept || departmentsData[currentDept].label;
+            let cleanSavedDept = savedDept.replace(/^(مصلحة\s*)/, '');
+            document.getElementById("evalSubDept").value = cleanSavedDept;
             
             document.getElementById("evalAbsence").value = emp.absence || 0;
             document.getElementById("evalDelay").value = emp.delay || 0;
@@ -1109,7 +1089,8 @@
             document.getElementById("absFacility").innerText = document.getElementById("inSubFacility").value;
 
             document.getElementById("absEmpName").innerText = emp.name;
-            document.getElementById("absEmpDept").innerText = emp.subDept || departmentsData[currentDept].label;
+            let cleanDept = (emp.subDept || departmentsData[currentDept].label).replace(/^(مصلحة\s*)/, '');
+            document.getElementById("absEmpDept").innerText = cleanDept;
             
             let durList = [];
             if(emp.absence > 0) { durList.push(emp.absence + " يوم/أيام"); }
@@ -1142,7 +1123,9 @@
             let centerText = document.getElementById("inCenter").value.replace(/^(ب?المركز الصحي\s*)/, '');
             document.getElementById("indivEvalCenter").innerText = centerText;
             document.getElementById("indivEvalFacility").innerText = document.getElementById("inSubFacility").value;
-            document.getElementById("indivEvalDept").innerText = emp.subDept || departmentsData[currentDept].label;
+            
+            let cleanDept = (emp.subDept || departmentsData[currentDept].label).replace(/^(مصلحة\s*)/, '');
+            document.getElementById("indivEvalDept").innerText = cleanDept;
 
             document.getElementById("indivEvalName").innerText = emp.name;
             document.getElementById("indivEvalAbsence").innerText = emp.absence || 0;
@@ -1163,8 +1146,18 @@
             let centerText = document.getElementById("inCenter").value.replace(/^(ب?المركز الصحي\s*)/, '');
             document.getElementById("evalCenter").innerText = centerText;
             
-            const deptLabel = departmentsData[currentDept].label;
-            document.getElementById("evalDeptName").innerText = deptLabel;
+            let deptLabel = departmentsData[currentDept].label;
+            let cleanDeptLabel = deptLabel.replace(/^(مصلحة\s*)/, '');
+            
+            const selectElem = document.getElementById("evalPreviewDeptSelect");
+            
+            let optionExists = Array.from(selectElem.options).some(opt => opt.value === cleanDeptLabel);
+            if(!optionExists) {
+                let newOption = new Option(cleanDeptLabel, cleanDeptLabel);
+                selectElem.add(newOption);
+            }
+            selectElem.value = cleanDeptLabel;
+            document.getElementById("evalDeptName").innerText = cleanDeptLabel;
             
             document.getElementById("evalFacility").innerText = document.getElementById("inSubFacility").value;
 
