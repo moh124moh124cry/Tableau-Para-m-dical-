@@ -284,13 +284,13 @@
 
     <!-- شريط التبديل بين المصالح والأسلاك -->
     <div class="departments-bar no-print" id="departmentsBar">
-        <button class="dept-btn active" onclick="switchDepartment('paramedical')">🩺 المداومة الشبه طبية</button>
-        <button class="dept-btn" onclick="switchDepartment('doctors')">👨‍⚕️ مداومة الأطباء</button>
-        <button class="dept-btn" onclick="switchDepartment('patrols')">🚑 الدوريات الطبية</button>
+        <button class="dept-btn active" onclick="switchDepartment('paramedical')">🩺 مصلحة الشبه طبي</button>
+        <button class="dept-btn" onclick="switchDepartment('doctors')">👨‍⚕️ مصلحة طب عام</button>
+        <button class="dept-btn" onclick="switchDepartment('dental')">🦷 مصلحة طب الأسنان</button>
         <button class="dept-btn" onclick="switchDepartment('lab')">🔬 مصلحة المخبر</button>
         <button class="dept-btn" onclick="switchDepartment('radio')">🩻 مصلحة الأشعة</button>
-        <button class="dept-btn" onclick="switchDepartment('dental')">🦷 جراحة الأسنان</button>
-        <button class="dept-btn" onclick="switchDepartment('receipts')">💳 مكتب الإيرادات</button>
+        <button class="dept-btn" onclick="switchDepartment('receipts')">💳 مصلحة الإيرادات</button>
+        <button class="dept-btn" onclick="switchDepartment('patrols')">🚑 الدوريات الطبية</button>
         <button class="dept-btn" onclick="switchDepartment('ambulance')">🚐 سائقي الإسعاف</button>
         <button class="dept-btn" onclick="switchDepartment('security')">🛡️ الحراسة والأمن</button>
     </div>
@@ -412,7 +412,7 @@
 
         <!-- إدارة موظفي المصلحة המحددة -->
         <div class="staff-management">
-            <div class="section-title">👥 إدارة طاقم <span id="staffDeptNameLabel">المداومة الشبه طبية</span></div>
+            <div class="section-title">👥 إدارة طاقم <span id="staffDeptNameLabel">مصلحة الشبه طبي</span></div>
             <div class="grid-layout">
                 <div class="form-group">
                     <label>اسم الموظف / العون:</label>
@@ -580,7 +580,6 @@
                 <option value="مصلحة الايرادات">مصلحة الايرادات</option>
                 <option value="مصلحة الرقمنة">مصلحة الرقمنة</option>
                 <option value="مصلحة مكتب الدخول">مصلحة مكتب الدخول</option>
-                <option value="المداومة الشبه طبية">المداومة الشبه طبية</option>
             </select>
             <button class="btn-print" onclick="window.print()">🖨️ طباعة التقرير</button>
             <button class="btn-secondary" onclick="exitPreviewMode()">❌ رجوع للوحة التحكم</button>
@@ -657,10 +656,8 @@
                 <tr><th>الملاحظات الإدارية</th><td id="indivEvalRemarks" contenteditable="true" style="text-align: right; line-height: 1.8;"></td></tr>
             </table>
 
-            <div class="signatures-area" style="margin-top: 80px;">
-                <div>إمضاء المعني</div>
-                <div>رئيس المصلحة</div>
-                <div>مدير المؤسسة</div>
+            <div class="signatures-area" style="margin-top: 80px; justify-content: flex-end; padding-left: 40px; padding-right: 0;">
+                <div style="text-align: left; width: 100%;">إمضاء رئيس المصلحة</div>
             </div>
             <div class="credits" style="margin-top: 60px;">من تصميم All World Digital</div>
         </div>
@@ -761,7 +758,7 @@
 
         const defaultDepartmentsData = {
             paramedical: {
-                title: "جدول المداومة الشبه الطبية", label: "المداومة الشبه طبية", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
+                title: "جدول المداومة الشبه الطبية", label: "مصلحة الشبه طبي", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
                     { name: "حمان ف", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "عيساوي ر", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
@@ -777,7 +774,7 @@
                 teams: [{ name: "الفرقة الأولى (أ)", m1: "حمان ف", m2: "عيساوي ر", m3: "خليفي ع" }, { name: "الفرقة الثانية (ب)", m1: "بن عاشور ر", m2: "ثليجي ن", m3: "" }, { name: "الفرقة الثالثة (ج)", m1: "لزرق س", m2: "خليفي ع", m3: "" }]
             },
             doctors: {
-                title: "جدول مداومة الأطباء العامين", label: "مداومة الأطباء", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
+                title: "جدول مداومة الأطباء العامين", label: "مصلحة طب عام", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
                     { name: "د. بلقاسم م", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "د. قدور ع", type: "evening", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
@@ -786,14 +783,13 @@
                 ],
                 teams: [{ name: "فرقة الأطباء 1", m1: "د. بلقاسم م", m2: "د. قدور ع", m3: "" }]
             },
-            patrols: {
-                title: "جدول الدوريات والخرجات الطبية", label: "الدوريات الطبية", shifts: { s1: "دورية الصباح (08-12)", s2: "دورية المساء (13-16)", s3: "فريق الإسناد والتدخل" },
+            dental: {
+                title: "جدول مداومة مصلحة جراحة الأسنان", label: "مصلحة طب الأسنان", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "المداومة والاستعجالات" },
                 employees: [
-                    { name: "د. رحماني ك", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "عثماني أ", type: "evening", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "بوزيد س", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
+                    { name: "د. بوزيان", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "ناصري خ", type: "evening", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
-                teams: [{ name: "طاقم الدورية الريفية", m1: "د. رحماني ك", m2: "عثماني أ", m3: "بوزيد س" }]
+                teams: [{ name: "عيادة الأسنان", m1: "د. بوزيان", m2: "ناصري خ", m3: "" }]
             },
             lab: {
                 title: "جدول مداومة مصلحة المخبر والتحاليل", label: "مصلحة المخبر", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
@@ -811,21 +807,22 @@
                 ],
                 teams: [{ name: "فريق الأشعة", m1: "مرابط ح", m2: "", m3: "" }]
             },
-            dental: {
-                title: "جدول مداومة مصلحة جراحة الأسنان", label: "جراحة الأسنان", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "المداومة والاستعجالات" },
-                employees: [
-                    { name: "د. بوزيان", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
-                    { name: "ناصري خ", type: "evening", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
-                ],
-                teams: [{ name: "عيادة الأسنان", m1: "د. بوزيان", m2: "ناصري خ", m3: "" }]
-            },
             receipts: {
-                title: "جدول مداومة مكتب الإيرادات والتحصيل", label: "مكتب الإيرادات", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
+                title: "جدول مداومة مكتب الإيرادات والتحصيل", label: "مصلحة الإيرادات", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
                 employees: [
                     { name: "فلاحي ع", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
                     { name: "سماتي ر", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
                 ],
                 teams: [{ name: "مكتب الإيرادات", m1: "فلاحي ع", m2: "", m3: "" }]
+            },
+            patrols: {
+                title: "جدول الدوريات والخرجات الطبية", label: "الدوريات الطبية", shifts: { s1: "دورية الصباح (08-12)", s2: "دورية المساء (13-16)", s3: "فريق الإسناد والتدخل" },
+                employees: [
+                    { name: "د. رحماني ك", type: "morning", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "عثماني أ", type: "evening", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] },
+                    { name: "بوزيد س", type: "night", isVacation: false, vStart: "", vEnd: "", absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] }
+                ],
+                teams: [{ name: "طاقم الدورية الريفية", m1: "د. رحماني ك", m2: "عثماني أ", m3: "بوزيد س" }]
             },
             ambulance: {
                 title: "جدول مداومة سائقي سيارة الإسعاف", label: "سائقي الإسعاف", shifts: { s1: "08 سا الى 14 سا", s2: "14 سا الى 20 سا", s3: "20 سا الى 08 سا" },
@@ -1027,7 +1024,7 @@
             if (!name) return alert("يرجى إدخال اسم الموظف / العون");
             departmentsData[currentDept].employees.push({ 
                 name, type, isVacation: isVac, vStart: isVac ? vStart : "", vEnd: isVac ? vEnd : "", 
-                absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"], subDept: "مصلحة العلاج العام"
+                absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"], subDept: departmentsData[currentDept].label
             });
             document.getElementById("staffNameInput").value = "";
             saveToLocalStorage();
@@ -1048,7 +1045,7 @@
             const emp = departmentsData[currentDept].employees[index];
             document.getElementById("evalEmpName").innerText = emp.name;
             
-            document.getElementById("evalSubDept").value = emp.subDept || "مصلحة العلاج العام";
+            document.getElementById("evalSubDept").value = emp.subDept || departmentsData[currentDept].label;
             
             document.getElementById("evalAbsence").value = emp.absence || 0;
             document.getElementById("evalDelay").value = emp.delay || 0;
@@ -1112,7 +1109,7 @@
             document.getElementById("absFacility").innerText = document.getElementById("inSubFacility").value;
 
             document.getElementById("absEmpName").innerText = emp.name;
-            document.getElementById("absEmpDept").innerText = emp.subDept || "مصلحة العلاج العام";
+            document.getElementById("absEmpDept").innerText = emp.subDept || departmentsData[currentDept].label;
             
             let durList = [];
             if(emp.absence > 0) { durList.push(emp.absence + " يوم/أيام"); }
@@ -1145,7 +1142,7 @@
             let centerText = document.getElementById("inCenter").value.replace(/^(ب?المركز الصحي\s*)/, '');
             document.getElementById("indivEvalCenter").innerText = centerText;
             document.getElementById("indivEvalFacility").innerText = document.getElementById("inSubFacility").value;
-            document.getElementById("indivEvalDept").innerText = emp.subDept || "مصلحة العلاج العام";
+            document.getElementById("indivEvalDept").innerText = emp.subDept || departmentsData[currentDept].label;
 
             document.getElementById("indivEvalName").innerText = emp.name;
             document.getElementById("indivEvalAbsence").innerText = emp.absence || 0;
@@ -1167,14 +1164,6 @@
             document.getElementById("evalCenter").innerText = centerText;
             
             const deptLabel = departmentsData[currentDept].label;
-            const selectElem = document.getElementById("evalPreviewDeptSelect");
-            
-            let optionExists = Array.from(selectElem.options).some(opt => opt.value === deptLabel);
-            if(!optionExists) {
-                let newOption = new Option(deptLabel, deptLabel);
-                selectElem.add(newOption);
-            }
-            selectElem.value = deptLabel;
             document.getElementById("evalDeptName").innerText = deptLabel;
             
             document.getElementById("evalFacility").innerText = document.getElementById("inSubFacility").value;
