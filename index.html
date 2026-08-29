@@ -241,6 +241,9 @@
             padding: 10px 20px; 
         }
 
+        /* تنسيق الخانات القابلة للتعديل عند المرور عليها للفت الانتباه */
+        td[contenteditable="true"]:hover { background-color: #fef08a; cursor: text; }
+
         @media print {
             body { background: #fff; padding: 0; margin: 0; }
             .no-print, .modal-overlay, #activationScreen, .departments-bar { display: none !important; }
@@ -250,6 +253,7 @@
             .schedule-table th, .schedule-table td { border: 1.5px solid #000 !important; font-size: 11px !important; padding: 3px 1px !important; }
             .schedule-table th, .report-grid th { background-color: #eaeaea !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .signatures-area { margin-top: 40px; }
+            td[contenteditable="true"]:hover { background-color: transparent; }
         }
 
         @media (max-width: 768px) {
@@ -277,7 +281,7 @@
     </div>
 
     <!-- شريط التبديل بين المصالح والأسلاك -->
-    <div class="departments-bar no-print">
+    <div class="departments-bar no-print" id="departmentsBar">
         <button class="dept-btn active" onclick="switchDepartment('paramedical')">🩺 المداومة الشبه طبية</button>
         <button class="dept-btn" onclick="switchDepartment('doctors')">👨‍⚕️ مداومة الأطباء</button>
         <button class="dept-btn" onclick="switchDepartment('patrols')">🚑 الدوريات الطبية</button>
@@ -289,13 +293,13 @@
         <button class="dept-btn" onclick="switchDepartment('security')">🛡️ الحراسة والأمن</button>
     </div>
 
-    <!-- نافذة تتبع الحضور والتقييم (المحدثة) -->
+    <!-- نافذة تتبع الحضور والتقييم -->
     <div class="modal-overlay" id="evalModal">
         <div class="modal-content">
             <div class="modal-header">📋 تتبع الحضور والتقييم للموظف: <span id="evalEmpName" style="color:#d97706;"></span></div>
             
             <div class="form-group" style="margin-bottom:15px;">
-                <label>مصلحة الموظف:</label>
+                <label>مصلحة الموظف (تظهر في تقرير الغياب):</label>
                 <select id="evalSubDept">
                     <option value="مصلحة طب عام">مصلحة طب عام</option>
                     <option value="مصلحة طب الاسنان">مصلحة طب الاسنان</option>
@@ -334,16 +338,15 @@
                 <textarea id="evalRemarks" rows="3"></textarea>
             </div>
             <div class="btn-group" style="justify-content: flex-end; margin-top: 20px;">
-                <button class="btn-report" onclick="printAbsenceReport()">📄 تقرير غياب وتأخر</button>
-                <button class="btn-eval" style="padding: 6px 12px; font-size: 12px;" onclick="printEvalReport()">📊 تقرير التقييم</button>
+                <button class="btn-report" onclick="openAbsencePreview()">📄 تقرير غياب وتأخر</button>
                 <button class="btn-add" onclick="saveEvaluationAndClose()">💾 حفظ التغييرات</button>
                 <button class="btn-secondary" onclick="closeModal()">❌ إغلاق</button>
             </div>
         </div>
     </div>
 
-    <!-- لوحة التحكم الإدارية -->
-    <div class="no-print">
+    <!-- لوحة التحكم الإدارية الأساسية -->
+    <div class="no-print" id="adminPanel">
         <div class="section-title">
             <span>⚙️ إعدادات: </span>
             <span id="currentDeptTitleBadge" style="color:#d97706; margin-right:5px;">جدول المداومة الشبه طبية</span>
@@ -466,6 +469,8 @@
             <button class="btn-generate" onclick="generateSchedule()">⚡ تحديث وحفظ الجدول</button>
             <button class="btn-pdf" onclick="exportToPdf()">📄 تصدير PDF</button>
             <button class="btn-print" onclick="printSchedule()">🖨️ طباعة جدول المصلحة</button>
+            <!-- الزر الجديد للتقييم الشامل -->
+            <button class="btn-eval" style="padding: 9px 16px; font-size: 13px;" onclick="openEvalPreview()">📊 تقرير (الأداء والمواظبة)</button>
             <button class="btn-reset" onclick="resetData()">⚠️ إعادة ضبط البيانات</button>
         </div>
     </div>
@@ -521,6 +526,13 @@
 
     <!-- الوثيقة 2: تقرير التبليغ عن الغياب أو التأخر -->
     <div class="sheet-wrapper" id="printableAbsenceWrapper" style="display: none;">
+        
+        <div class="no-print" style="max-width: 980px; margin: 0 auto 20px auto; padding: 15px; background: #e0f2fe; border: 2px dashed #0284c7; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; align-items: center;">
+            <button class="btn-print" onclick="window.print()">🖨️ طباعة التقرير</button>
+            <button class="btn-secondary" onclick="exitPreviewMode()">❌ رجوع للوحة التحكم</button>
+            <div style="width: 100%; text-align: center; font-size: 12px; color: #b91c1c; font-weight: bold;">💡 يمكنك النقر على أي نص في التقرير لتعديله يدوياً قبل الطباعة</div>
+        </div>
+
         <div class="sheet-container">
             <div class="official-head">
                 <img id="absLogo" class="head-logo" src="" alt="شعار المؤسسة" style="display: none;">
@@ -528,12 +540,12 @@
                 
                 <div class="report-header-flex">
                     <div class="report-header-right">
-                        المركز الصحي: <span id="absCenter"></span><br>
-                        رقم المراسلة: ........ / <span id="absYear"></span>
+                        المركز الصحي: <span id="absCenter" contenteditable="true"></span><br>
+                        رقم المراسلة: ........ / <span id="absYear" contenteditable="true"></span>
                     </div>
                     <div class="report-header-left">
                         إلى السيد(ة) مدير(ة)<br>
-                        <span id="absFacility"></span>
+                        <span id="absFacility" contenteditable="true"></span>
                     </div>
                 </div>
                 
@@ -559,6 +571,26 @@
 
     <!-- الوثيقة 3: تقرير جدول التقييم الشامل للمصلحة -->
     <div class="sheet-wrapper" id="printableEvalWrapper" style="display: none;">
+        
+        <div class="no-print" style="max-width: 980px; margin: 0 auto 20px auto; padding: 15px; background: #e0f2fe; border: 2px dashed #0284c7; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; align-items: center;">
+            <label style="font-weight: bold; color: #1e3a8a;">تعيين المصلحة في أعلى التقرير:</label>
+            <select id="evalPreviewDeptSelect" onchange="document.getElementById('evalDeptName').innerText = this.value" style="padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: bold; outline: none;">
+                <option value="مصلحة طب عام">مصلحة طب عام</option>
+                <option value="مصلحة طب الاسنان">مصلحة طب الاسنان</option>
+                <option value="مصلحة المخبر">مصلحة المخبر</option>
+                <option value="مصلحة الأشعة">مصلحة الأشعة</option>
+                <option value="مصلحة العلاج العام">مصلحة العلاج العام</option>
+                <option value="مصلحة الأمومة">مصلحة الأمومة</option>
+                <option value="مصلحة الايرادات">مصلحة الايرادات</option>
+                <option value="مصلحة الرقمنة">مصلحة الرقمنة</option>
+                <option value="مصلحة مكتب الدخول">مصلحة مكتب الدخول</option>
+                <option value="المداومة الشبه طبية">المداومة الشبه طبية</option>
+            </select>
+            <button class="btn-print" onclick="window.print()">🖨️ طباعة التقرير</button>
+            <button class="btn-secondary" onclick="exitPreviewMode()">❌ رجوع للوحة التحكم</button>
+            <div style="width: 100%; text-align: center; font-size: 12px; color: #b91c1c; font-weight: bold;">💡 يمكنك النقر على أي خانة في الجدول أسفله لتعديل التقييم والملاحظات لكل موظف يدوياً قبل الطباعة</div>
+        </div>
+
         <div class="sheet-container">
             <div class="official-head">
                 <img id="evalLogo" class="head-logo" src="" alt="شعار المؤسسة" style="display: none;">
@@ -566,17 +598,17 @@
                 
                 <div class="report-header-flex">
                     <div class="report-header-right">
-                        المركز الصحي: <span id="evalCenter"></span><br>
-                        مصلحة: <span id="evalDeptName"></span>
+                        المركز الصحي: <span id="evalCenter" contenteditable="true"></span><br>
+                        مصلحة: <span id="evalDeptName" contenteditable="true" style="border-bottom: 1px dashed #ccc; padding: 0 5px;"></span>
                     </div>
                     <div class="report-header-left">
                         إلى السيد(ة) مدير(ة)<br>
-                        <span id="evalFacility"></span>
+                        <span id="evalFacility" contenteditable="true"></span>
                     </div>
                 </div>
                 
                 <div class="head-title-block" style="margin-top: 20px;">
-                    <div class="main-title">جدول تقييم الأداء والمواظبة</div>
+                    <div class="main-title">جدول تقييم (الأداء والمواظبة)</div>
                 </div>
             </div>
 
@@ -956,7 +988,7 @@
             if (!name) return alert("يرجى إدخال اسم الموظف / العون");
             departmentsData[currentDept].employees.push({ 
                 name, type, isVacation: isVac, vStart: isVac ? vStart : "", vEnd: isVac ? vEnd : "", 
-                absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"] 
+                absence: 0, delay: 0, rating: "ممتاز", remarks: defaultRemarks["ممتاز"], subDept: "مصلحة العلاج العام"
             });
             document.getElementById("staffNameInput").value = "";
             saveToLocalStorage();
@@ -1007,15 +1039,23 @@
             }
         }
 
-        // إخفاء وإظهار الواجهات للطباعة
+        // إخفاء وإظهار الواجهات للطباعة أو المعاينة
         function hideAllWrappers() {
             document.getElementById("printableScheduleWrapper").style.display = "none";
             document.getElementById("printableAbsenceWrapper").style.display = "none";
             document.getElementById("printableEvalWrapper").style.display = "none";
         }
 
-        // طباعة تقرير التبليغ عن غياب وتأخر
-        function printAbsenceReport() {
+        function exitPreviewMode() {
+            document.getElementById("departmentsBar").style.display = "flex";
+            document.getElementById("adminPanel").style.display = "block";
+            hideAllWrappers();
+            document.getElementById("printableScheduleWrapper").style.display = "block";
+            window.scrollTo(0,0);
+        }
+
+        // فتح معاينة تقرير التبليغ عن غياب وتأخر
+        function openAbsencePreview() {
             if (currentEditIndex === -1) return;
             
             const emp = departmentsData[currentDept].employees[currentEditIndex];
@@ -1047,56 +1087,55 @@
             let d = document.getElementById("reportDate").value;
             document.getElementById("absDate").innerText = d ? d : new Date().toLocaleDateString('en-GB');
 
+            document.getElementById("departmentsBar").style.display = "none";
+            document.getElementById("adminPanel").style.display = "none";
             hideAllWrappers();
             document.getElementById("printableAbsenceWrapper").style.display = "block";
-            window.print();
-            
-            hideAllWrappers();
-            document.getElementById("printableScheduleWrapper").style.display = "block";
-            renderEmployeesList();
             closeModal();
+            window.scrollTo(0,0);
         }
 
-        // طباعة جدول التقييم الشامل للمصلحة
-        function printEvalReport() {
-            if (currentEditIndex > -1) {
-                const emp = departmentsData[currentDept].employees[currentEditIndex];
-                emp.subDept = document.getElementById("evalSubDept").value;
-                emp.absence = document.getElementById("evalAbsence").value;
-                emp.delay = document.getElementById("evalDelay").value;
-                emp.rating = document.getElementById("evalRating").value;
-                emp.remarks = document.getElementById("evalRemarks").value;
-                saveToLocalStorage();
-            }
-
+        // فتح معاينة جدول التقييم الشامل (مع خلايا قابلة للتعديل)
+        function openEvalPreview() {
             let centerText = document.getElementById("inCenter").value.replace(/^(ب?المركز الصحي\s*)/, '');
             document.getElementById("evalCenter").innerText = centerText;
             
-            document.getElementById("evalDeptName").innerText = departmentsData[currentDept].label;
+            // ضبط القائمة المنسدلة للعنوان تلقائياً حسب المصلحة الحالية
+            const deptLabel = departmentsData[currentDept].label;
+            const selectElem = document.getElementById("evalPreviewDeptSelect");
+            
+            // التأكد من وجود الخيار في القائمة المنسدلة
+            let optionExists = Array.from(selectElem.options).some(opt => opt.value === deptLabel);
+            if(!optionExists) {
+                let newOption = new Option(deptLabel, deptLabel);
+                selectElem.add(newOption);
+            }
+            selectElem.value = deptLabel;
+            document.getElementById("evalDeptName").innerText = deptLabel;
+            
             document.getElementById("evalFacility").innerText = document.getElementById("inSubFacility").value;
 
             const tbody = document.getElementById("evalTableBody");
             tbody.innerHTML = "";
             departmentsData[currentDept].employees.forEach(emp => {
+                // اضافة contenteditable للسماح بالتعديل اليدوي قبل الطباعة
                 tbody.innerHTML += `
                     <tr>
-                        <td>${emp.name}</td>
-                        <td dir="rtl">${emp.delay || 0}</td>
-                        <td dir="rtl">${emp.absence || 0}</td>
-                        <td>${emp.rating || 'ممتاز'}</td>
-                        <td>${emp.remarks || ''}</td>
+                        <td contenteditable="true">${emp.name}</td>
+                        <td dir="rtl" contenteditable="true">${emp.delay || 0}</td>
+                        <td dir="rtl" contenteditable="true">${emp.absence || 0}</td>
+                        <td contenteditable="true">${emp.rating || 'ممتاز'}</td>
+                        <td contenteditable="true" style="text-align: right;">${emp.remarks || ''}</td>
                     </tr>
                 `;
             });
 
+            document.getElementById("departmentsBar").style.display = "none";
+            document.getElementById("adminPanel").style.display = "none";
             hideAllWrappers();
             document.getElementById("printableEvalWrapper").style.display = "block";
-            window.print();
-            
-            hideAllWrappers();
-            document.getElementById("printableScheduleWrapper").style.display = "block";
-            renderEmployeesList();
-            closeModal();
+            if (currentEditIndex > -1) closeModal();
+            window.scrollTo(0,0);
         }
 
         function isPersonOnVacation(personName, dateStr) {
@@ -1108,7 +1147,7 @@
             return curDate >= startDate && curDate <= endDate;
         }
 
-        // توليد الجدول الخاص بالمصلحة الحالية
+        // توليد الجدول الخاص بالمصلحة الحالية للطباعة
         function generateSchedule() {
             document.getElementById("outFacility").innerText = document.getElementById("inFacility").value;
             document.getElementById("outSubFacility").innerText = document.getElementById("inSubFacility").value;
@@ -1207,6 +1246,8 @@
         }
 
         function printSchedule() {
+            document.getElementById("departmentsBar").style.display = "flex";
+            document.getElementById("adminPanel").style.display = "block";
             hideAllWrappers();
             document.getElementById("printableScheduleWrapper").style.display = "block";
             window.print();
